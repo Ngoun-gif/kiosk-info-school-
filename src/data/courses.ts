@@ -32,7 +32,12 @@ export const courses: Course[] = [
     level: 'Bachelor',
     description:
       'Combines business and IT to design, manage, and improve information systems in organizations.',
-    highlights: ['Database Systems', 'Business Analysis', 'Project Management'],
+    highlights: [
+      'Database Systems',
+      'Business Analysis',
+      'Project Management',
+      'System Development',
+    ],
     requirements: [
       'High school diploma or equivalent',
       'Basic English reading and writing',
@@ -117,7 +122,12 @@ export const courses: Course[] = [
     level: 'Creative',
     description:
       'Develops creative skills in visual communication, branding, and multimedia production.',
-    highlights: ['Branding', 'UI Design', 'Multimedia'],
+    highlights: [
+      'Branding',
+      'UI Design',
+      'Multimedia',
+      'Creative Portfolio',
+    ],
     requirements: [
       'High school diploma or equivalent',
       'Interest in visual arts and communication',
@@ -201,7 +211,12 @@ export const courses: Course[] = [
     level: 'Bachelor',
     description:
       'Integrates business operations with modern IT systems for digital organizations.',
-    highlights: ['Business IT', 'E-Commerce', 'Data Systems'],
+    highlights: [
+      'Business IT',
+      'E-Commerce',
+      'Data Systems',
+      'Digital Transformation',
+    ],
     requirements: [
       'High school diploma or equivalent',
       'Basic English communication',
@@ -283,7 +298,12 @@ export const courses: Course[] = [
     level: 'Master',
     description:
       'Advanced study in managing enterprise IT systems, digital transformation, and strategic decision-making.',
-    highlights: ['Enterprise Systems', 'IT Strategy', 'Digital Transformation'],
+    highlights: [
+      'Enterprise Systems',
+      'IT Strategy',
+      'Digital Transformation',
+      'Business Analytics',
+    ],
     requirements: [
       'Bachelor degree or equivalent',
       'Basic academic writing and research ability',
@@ -345,7 +365,12 @@ export const courses: Course[] = [
     level: 'Master',
     description:
       'Develops leadership, strategic thinking, and advanced management skills for business professionals.',
-    highlights: ['Leadership', 'Strategy', 'Business Analytics'],
+    highlights: [
+      'Leadership',
+      'Strategy',
+      'Business Analytics',
+      'Entrepreneurship',
+    ],
     requirements: [
       'Bachelor degree or equivalent',
       'Interest in business leadership and management',
@@ -407,7 +432,12 @@ export const courses: Course[] = [
     level: 'Master',
     description:
       'Advanced computing concepts including software engineering, AI, and system architecture.',
-    highlights: ['AI', 'Advanced Programming', 'Architecture'],
+    highlights: [
+      'AI',
+      'Advanced Programming',
+      'Architecture',
+      'Cloud Computing',
+    ],
     requirements: [
       'Bachelor degree or equivalent',
       'Background in computing or related field',

@@ -23,5 +23,5 @@
 <script setup lang="ts">
 import AppHeader from './components/layout/AppHeader.vue'
 import AppNavbar from './components/layout/AppNavbar.vue'
-import SchoolFooter from './components/layout/SchoolFooter.vue'
+import SchoolFooter from './components/layout/AppFooter.vue'
 </script>

@@ -183,6 +183,12 @@
           class="mt-8 rounded-[24px] border border-slate-200 bg-white p-6 shadow-sm"
         >
           <div class="mb-6">
+             <div class="flex items-center gap-2 text-sky-700">
+              <Layers3 class="h-5 w-5" />
+              <p class="text-sm font-semibold uppercase tracking-[0.2em]">
+                More Courses
+              </p>
+            </div>
             <h2 class="text-2xl font-bold text-slate-900">
               Related Internship Tracks
             </h2>
@@ -258,6 +264,8 @@ import {
   CheckCircle,
   BriefcaseBusiness,
   CalendarDays,
+  Layers3,
+
 } from 'lucide-vue-next'
 import { internshipDetails, internshipTracks } from '@/data/internship'
 

@@ -2,6 +2,7 @@
   <section class="rounded-[28px] bg-white p-6 shadow-lg">
     <div class="flex items-start justify-between gap-4">
       <SectionTitle
+        
         eyebrow="Latest Updates"
         title="Institute Announcements"
         description="Important notices for students, parents, and visitors."

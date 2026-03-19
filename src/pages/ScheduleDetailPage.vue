@@ -1,7 +1,7 @@
 <template>
   <section
     v-if="schedule"
-    class="rounded-[28px] border border-slate-200 bg-white p-6 shadow-sm"
+    class="mt-8"
   >
     <div class="flex items-center gap-2 text-sky-700">
       <CalendarDays class="h-5 w-5" />
@@ -16,7 +16,7 @@
       <article
         v-for="session in schedule.sessions"
         :key="session.shift"
-        class="overflow-hidden rounded-2xl border border-slate-200 bg-slate-50"
+        class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm"
       >
         <div
           class="border-b border-slate-200 bg-gradient-to-r from-sky-50 via-cyan-50 to-emerald-50 p-4"
@@ -35,7 +35,7 @@
         </div>
 
         <div class="grid gap-4 p-4 md:grid-cols-3">
-          <div class="rounded-xl border border-slate-200 bg-white p-4">
+          <div class="rounded-xl border border-slate-200 bg-slate-50 p-4">
             <p class="text-xs font-semibold uppercase tracking-[0.15em] text-sky-700">
               Days
             </p>
@@ -44,7 +44,7 @@
             </p>
           </div>
 
-          <div class="rounded-xl border border-slate-200 bg-white p-4">
+          <div class="rounded-xl border border-slate-200 bg-slate-50 p-4">
             <p class="text-xs font-semibold uppercase tracking-[0.15em] text-sky-700">
               Time
             </p>
@@ -53,7 +53,7 @@
             </p>
           </div>
 
-          <div class="rounded-xl border border-slate-200 bg-white p-4">
+          <div class="rounded-xl border border-slate-200 bg-slate-50 p-4">
             <p class="text-xs font-semibold uppercase tracking-[0.15em] text-sky-700">
               Room
             </p>

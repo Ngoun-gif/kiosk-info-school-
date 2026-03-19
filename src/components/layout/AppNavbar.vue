@@ -23,10 +23,7 @@
             class="h-5 w-5"
             :class="isActive(item) ? 'text-white' : 'text-slate-600'"
           />
-
-          <span>
-            {{ item.label }}
-          </span>
+          <span>{{ item.label }}</span>
         </a>
       </RouterLink>
     </div>
@@ -34,8 +31,8 @@
 </template>
 
 <script setup lang="ts">
-import { useRoute } from 'vue-router'
-import type { NavigationGuardNext } from 'vue-router'
+import { nextTick } from 'vue'
+import { useRoute, type NavigationFailure } from 'vue-router'
 import {
   Home,
   Megaphone,
@@ -82,7 +79,7 @@ const scrollToTop = () => {
 
 const handleNavClick = async (
   item: { to: string },
-  navigate: (e?: MouseEvent) => Promise<void>
+  navigate: (e?: MouseEvent) => Promise<void | NavigationFailure>
 ) => {
   if (isActive(item)) {
     scrollToTop()
@@ -90,5 +87,7 @@ const handleNavClick = async (
   }
 
   await navigate()
+  await nextTick()
+  scrollToTop()
 }
 </script>

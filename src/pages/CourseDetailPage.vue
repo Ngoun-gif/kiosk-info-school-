@@ -69,89 +69,53 @@
           </p>
         </div>
 
-        <div class="mt-8 grid gap-4 md:grid-cols-2">
+        <div class="mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
           <div class="rounded-2xl border border-slate-200 bg-white p-5">
             <div class="flex items-center gap-2 text-sky-700">
-              <BookOpen class="h-5 w-5" />
-              <h2 class="text-lg font-semibold text-slate-900">Program Overview</h2>
+              <Clock3 class="h-5 w-5" />
+              <h2 class="text-sm font-semibold uppercase tracking-[0.15em] text-slate-700">
+                Duration
+              </h2>
             </div>
-
-            <p class="mt-3 leading-7 text-slate-600">
-              This program is designed to help students build strong academic
-              knowledge, practical skills, and confidence for future study and
-              professional work. Students will progress from foundational learning
-              to applied subjects, projects, and career preparation.
+            <p class="mt-3 text-base font-semibold text-slate-900">
+              {{ course.duration }}
             </p>
           </div>
 
-          <div class="rounded-2xl border border-slate-200 bg-white p-5">
-            <div class="flex items-center gap-2 text-sky-700">
-              <Briefcase class="h-5 w-5" />
-              <h2 class="text-lg font-semibold text-slate-900">Career Pathways</h2>
-            </div>
-
-            <div v-if="course.career?.length" class="mt-4 flex flex-wrap gap-2">
-              <span
-                v-for="job in course.career"
-                :key="job"
-                class="rounded-full bg-emerald-50 px-3 py-2 text-sm font-medium text-emerald-700"
-              >
-                {{ job }}
-              </span>
-            </div>
-
-            <p v-else class="mt-3 leading-7 text-slate-600">
-              Graduates can pursue opportunities in industry, business,
-              technology, design, and related professional sectors.
-            </p>
-          </div>
-        </div>
-
-        <div class="mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
           <div class="rounded-2xl border border-slate-200 bg-white p-5">
             <div class="flex items-center gap-2 text-sky-700">
               <ClipboardList class="h-5 w-5" />
-              <h2 class="text-lg font-semibold text-slate-900">Requirements</h2>
+              <h2 class="text-sm font-semibold uppercase tracking-[0.15em] text-slate-700">
+                Category
+              </h2>
             </div>
+            <p class="mt-3 text-base font-semibold text-slate-900">
+              {{ course.category }}
+            </p>
+          </div>
 
-            <ul class="mt-4 space-y-3">
-              <li
-                v-for="item in course.requirements"
-                :key="item"
-                class="flex items-start gap-3 text-sm leading-6 text-slate-600"
-              >
-                <CheckCircle class="mt-0.5 h-4 w-4 shrink-0 text-emerald-500" />
-                <span>{{ item }}</span>
-              </li>
-            </ul>
+          <div class="rounded-2xl border border-slate-200 bg-white p-5">
+            <div class="flex items-center gap-2 text-sky-700">
+              <Target class="h-5 w-5" />
+              <h2 class="text-sm font-semibold uppercase tracking-[0.15em] text-slate-700">
+                Level
+              </h2>
+            </div>
+            <p class="mt-3 text-base font-semibold text-slate-900">
+              {{ course.level }}
+            </p>
           </div>
 
           <div class="rounded-2xl border border-slate-200 bg-white p-5">
             <div class="flex items-center gap-2 text-sky-700">
               <Users class="h-5 w-5" />
-              <h2 class="text-lg font-semibold text-slate-900">Suitable For</h2>
+              <h2 class="text-sm font-semibold uppercase tracking-[0.15em] text-slate-700">
+                Career Path
+              </h2>
             </div>
 
-            <ul class="mt-4 space-y-3">
-              <li
-                v-for="item in course.suitableFor"
-                :key="item"
-                class="flex items-start gap-3 text-sm leading-6 text-slate-600"
-              >
-                <CheckCircle class="mt-0.5 h-4 w-4 shrink-0 text-sky-500" />
-                <span>{{ item }}</span>
-              </li>
-            </ul>
-          </div>
-
-          <div class="rounded-2xl border border-slate-200 bg-white p-5">
-            <div class="flex items-center gap-2 text-sky-700">
-              <Clock3 class="h-5 w-5" />
-              <h2 class="text-lg font-semibold text-slate-900">Study Time</h2>
-            </div>
-
-            <p class="mt-4 text-sm leading-7 text-slate-600">
-              {{ course.studyTime }}
+            <p class="mt-3 text-base font-semibold text-slate-900">
+              {{ course.career?.join(', ') || 'Not specified' }}
             </p>
           </div>
         </div>
@@ -159,29 +123,11 @@
         <div class="mt-8 grid gap-4 md:grid-cols-2">
           <div class="rounded-2xl border border-slate-200 bg-white p-5">
             <div class="flex items-center gap-2 text-sky-700">
-              <Target class="h-5 w-5" />
-              <h2 class="text-lg font-semibold text-slate-900">Program Goals</h2>
-            </div>
-
-            <ul class="mt-4 space-y-3">
-              <li
-                v-for="item in course.goals"
-                :key="item"
-                class="flex items-start gap-3 text-sm leading-6 text-slate-600"
-              >
-                <CheckCircle class="mt-0.5 h-4 w-4 shrink-0 text-purple-500" />
-                <span>{{ item }}</span>
-              </li>
-            </ul>
-          </div>
-
-          <div class="rounded-2xl border border-slate-200 bg-white p-5">
-            <div class="flex items-center gap-2 text-sky-700">
               <Wrench class="h-5 w-5" />
-              <h2 class="text-lg font-semibold text-slate-900">Skills You Will Gain</h2>
+              <h2 class="text-lg font-semibold text-slate-900">Skills You Will Learn</h2>
             </div>
 
-            <div class="mt-4 flex flex-wrap gap-2">
+            <div class="mt-4 flex flex-wrap gap-3">
               <span
                 v-for="item in course.skills"
                 :key="item"
@@ -191,9 +137,7 @@
               </span>
             </div>
           </div>
-        </div>
 
-        <div class="mt-8 grid gap-4 md:grid-cols-2">
           <div class="rounded-2xl border border-slate-200 bg-white p-5">
             <div class="flex items-center gap-2 text-sky-700">
               <Award class="h-5 w-5" />
@@ -204,7 +148,9 @@
               {{ course.certification }}
             </p>
           </div>
+        </div>
 
+        <div class="mt-4 grid gap-4 md:grid-cols-1">
           <div class="rounded-2xl border border-slate-200 bg-white p-5">
             <div class="flex items-center gap-2 text-sky-700">
               <BadgeCheck class="h-5 w-5" />
@@ -220,10 +166,14 @@
         <ScheduleDetail :schedule="courseSchedule" />
 
         <div class="mt-8">
-          <div class="flex items-center gap-2 text-sky-700">
-            <Sparkles class="h-5 w-5" />
-            <h2 class="text-xl font-bold text-slate-900">Program Highlights</h2>
-          </div>
+         <div class="flex items-center gap-2 text-sky-700">
+          <Sparkles class="h-5 w-5" />
+          <h2 class="text-xl font-bold text-slate-900">Program Highlights</h2>
+        </div>
+
+        <p class="mt-2 text-slate-600">
+          Discover the key strengths of this program, including practical skills, industry-focused learning, and career-ready knowledge.
+        </p>
 
           <div class="mt-4 grid gap-3 md:grid-cols-2">
             <div
@@ -307,14 +257,24 @@
     </section>
 
     <section
+      v-else
+      class="rounded-[28px] bg-white p-8 text-center shadow-lg"
+    >
+      <h1 class="text-2xl font-bold text-slate-900">Course not found</h1>
+      <p class="mt-2 text-slate-600">
+        The course you are looking for does not exist.
+      </p>
+    </section>
+
+    <section
       v-if="course && relatedCourses.length"
       class="rounded-[28px] bg-white p-8 shadow-lg"
     >
       <div class="mb-6">
         <div class="flex items-center gap-2 text-sky-700">
-          <Layers3 class="h-5 w-5" />
+          <BookOpen class="h-5 w-5" />
           <p class="text-sm font-semibold uppercase tracking-[0.2em]">
-            More Programs
+            More Courses
           </p>
         </div>
 
@@ -359,32 +319,20 @@
               <p class="mt-2 line-clamp-2 text-sm text-slate-600">
                 {{ item.description }}
               </p>
+
+              <div class="mt-3 flex flex-wrap items-center gap-2 text-xs text-slate-500">
+                <span class="rounded-full bg-slate-100 px-2.5 py-1 font-medium">
+                  {{ item.duration }}
+                </span>
+
+                <span class="rounded-full bg-slate-100 px-2.5 py-1 font-medium">
+                  {{ item.category }}
+                </span>
+              </div>
             </div>
-          </div>
-
-          <div
-            class="my-4 h-px bg-gradient-to-r from-sky-100 via-cyan-100 to-emerald-100"
-          ></div>
-
-          <div class="flex flex-wrap items-center gap-2 text-xs text-slate-500">
-            <div class="flex items-center gap-2">
-              <Clock3 class="h-4 w-4" />
-              <span>{{ item.duration }}</span>
-            </div>
-
-            <span class="rounded-full bg-slate-100 px-2.5 py-1 text-[11px] font-medium text-slate-600">
-              {{ item.category }}
-            </span>
           </div>
         </article>
       </div>
-    </section>
-
-    <section v-else class="rounded-[28px] bg-white p-8 text-center shadow-lg">
-      <h1 class="text-2xl font-bold text-slate-900">Course not found</h1>
-      <p class="mt-2 text-slate-600">
-        The course you are looking for does not exist.
-      </p>
     </section>
   </div>
 </template>
@@ -401,7 +349,6 @@ import {
   Briefcase,
   Sparkles,
   CheckCircle,
-  Layers3,
   Clock3,
   CalendarRange,
   BookMarked,

@@ -8,9 +8,12 @@
 
     <div class="relative">
       <!-- Header -->
-      <p class="text-sm font-semibold uppercase tracking-[0.25em] text-sky-600">
-        About CA Institute
-      </p>
+      <div class="flex items-center gap-2 text-sky-600">
+        <Info class="h-5 w-5" />
+        <span class="text-sm font-semibold uppercase tracking-[0.25em]">
+          About CA Institute
+        </span>
+      </div>
 
       <h2 class="mt-3 text-4xl font-bold leading-tight text-slate-900">
         Shaping Future Professionals Through Practical Education
@@ -58,7 +61,6 @@
 
       <!-- Vision / Mission / Values -->
       <div class="mt-10 grid grid-cols-1 gap-6 md:grid-cols-3">
-        
         <!-- Vision -->
         <div
           class="group rounded-3xl border border-slate-200 bg-gradient-to-br from-sky-50 to-white p-6 transition hover:-translate-y-1 hover:shadow-xl"
@@ -108,7 +110,59 @@
             <li>• Commitment to student success</li>
           </ul>
         </div>
+      </div>
 
+      <!-- Global Career Opportunities -->
+      <div class="mt-12">
+        <div class="flex items-center gap-2 text-sky-600">
+          <Globe class="h-5 w-5" />
+          <span class="text-sm font-semibold uppercase tracking-[0.25em]">
+            Global Career Opportunities
+          </span>
+        </div>
+
+        <h3 class="mt-3 text-3xl font-bold text-slate-900">
+          Career Pathways in International Industries
+        </h3>
+
+        <p class="mt-3 max-w-3xl leading-7 text-slate-600">
+          CA Institute prepares students for a wide range of professional
+          opportunities across technology, business, design, digital services,
+          and innovation-driven industries. Our programs are designed to build
+          practical skills that support both local and international career
+          growth.
+        </p>
+
+        <div class="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+          <div
+            v-for="item in globalSectors"
+            :key="item.title"
+            class="group rounded-2xl border border-slate-200 bg-white p-5 transition hover:-translate-y-1 hover:shadow-lg"
+          >
+            <div
+              class="flex h-12 w-12 items-center justify-center rounded-2xl"
+              :class="item.iconBg"
+            >
+              <component :is="item.icon" class="h-6 w-6" :class="item.iconColor" />
+            </div>
+
+            <h4 class="mt-4 text-base font-semibold text-slate-900">
+              {{ item.title }}
+            </h4>
+
+            <p class="mt-2 text-sm leading-6 text-slate-600">
+              {{ item.description }}
+            </p>
+          </div>
+        </div>
+
+        <div class="mt-6 rounded-2xl border border-slate-200 bg-slate-50 p-5">
+          <p class="text-sm leading-7 text-slate-600">
+            The career areas shown above are representative examples for
+            educational and informational purposes. Company names and trademarks
+            are not displayed in this section.
+          </p>
+        </div>
       </div>
     </div>
   </section>
@@ -122,5 +176,65 @@ import {
   Eye,
   Target,
   HeartHandshake,
+  Info,
+  Globe,
+  MonitorSmartphone,
+  Building2,
+  Palette,
+  BarChart3,
+  Cpu,
+
 } from 'lucide-vue-next'
+
+type CareerSector = {
+  title: string
+  description: string
+  icon: unknown
+  iconBg: string
+  iconColor: string
+}
+
+const globalSectors: CareerSector[] = [
+  {
+    title: 'Technology',
+    description:
+      'Software, IT support, systems administration, cloud services, and digital infrastructure roles.',
+    icon: MonitorSmartphone,
+    iconBg: 'bg-sky-100',
+    iconColor: 'text-sky-600',
+  },
+  {
+    title: 'Business & Management',
+    description:
+      'Operations, administration, project coordination, leadership, and organizational development.',
+    icon: Building2,
+    iconBg: 'bg-emerald-100',
+    iconColor: 'text-emerald-600',
+  },
+  {
+    title: 'Creative Design',
+    description:
+      'Graphic design, multimedia, branding, UI design, and digital content production.',
+    icon: Palette,
+    iconBg: 'bg-purple-100',
+    iconColor: 'text-purple-600',
+  },
+  {
+    title: 'Analytics & Strategy',
+    description:
+      'Data analysis, business intelligence, planning, strategic decision-making, and reporting.',
+    icon: BarChart3,
+    iconBg: 'bg-yellow-100',
+    iconColor: 'text-yellow-600',
+  },
+  {
+    title: 'Innovation & AI',
+    description:
+      'Emerging technologies, automation, intelligent systems, and future-focused digital solutions.',
+    icon: Cpu,
+    iconBg: 'bg-red-100',
+    iconColor: 'text-red-600',
+  },
+
+]
 </script>
