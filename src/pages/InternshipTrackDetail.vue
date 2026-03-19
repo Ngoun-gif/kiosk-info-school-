@@ -184,7 +184,7 @@
         >
           <div class="mb-6">
             <h2 class="text-2xl font-bold text-slate-900">
-              Related Internship Tracks..........
+              Related Internship Tracks
             </h2>
             <p class="mt-2 text-sm text-slate-500">
               Explore more internship opportunities from other departments
