@@ -114,10 +114,7 @@ const announcementTypes = [
   },
 ]
 
-const overview = [
-  'Announcements keep students, parents, and visitors informed about important updates happening across the institute.',
-  'They provide quick access to time-sensitive information such as schedules, events, and academic notices.',
-]
+
 
 const features = [
   'Latest academic and administrative updates',

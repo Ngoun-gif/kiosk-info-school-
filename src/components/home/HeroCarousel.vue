@@ -1,113 +1,88 @@
 <template>
   <section
-    class="relative overflow-hidden rounded-[28px] bg-gradient-to-r from-sky-700 via-cyan-600 to-emerald-500 p-6 text-white shadow-xl"
+    class="hero-carousel relative overflow-hidden rounded-[28px] bg-white shadow-lg select-none"
+    @mouseenter="pauseAutoplay"
+    @mouseleave="resumeAutoplay"
   >
     <div
-      class="pointer-events-none absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-black/10"
-    ></div>
-
-    <div class="relative grid min-h-[620px] grid-cols-1 md:grid-cols-[1fr_1.2fr]">
-      <div class="flex flex-col justify-center p-10 md:p-12">
-        <p class="text-base font-semibold uppercase tracking-[0.3em] text-sky-100">
-          Featured Highlights
-        </p>
-
-        <h2 class="mt-4 text-5xl font-bold leading-tight text-white">
-          Learn, Discover, and Stay Updated
-        </h2>
-
-        <p class="mt-5 max-w-xl text-xl leading-9 text-white/85">
-          Browse important announcements, explore our programs, and see what is
-          happening on campus.
-        </p>
-
-        <div class="mt-8 flex gap-4">
-          <button
-            v-for="(slide, index) in slides"
-            :key="slide.title"
-            type="button"
-            class="h-4 w-4 rounded-full transition-all duration-300"
-            :class="
-              currentSlide === index
-                ? 'scale-125 bg-white'
-                : 'bg-white/40 hover:bg-white/70'
-            "
-            :aria-label="`Go to slide ${index + 1}`"
-            @click="goToSlide(index)"
-          ></button>
-        </div>
-      </div>
-
+      ref="trackRef"
+      class="relative h-[380px] w-full overflow-hidden md:h-[460px]"
+      @mousedown="onDragStart"
+      @touchstart="onTouchStart"
+      @touchmove="onTouchMove"
+      @touchend="onTouchEnd"
+      @touchcancel="onTouchEnd"
+      @mouseleave="onDragEnd"
+    >
+      <!-- Slides Track -->
       <div
-        class="relative h-full min-h-[420px] overflow-hidden rounded-[24px] bg-slate-200"
-        @touchstart="handleTouchStart"
-        @touchmove="handleTouchMove"
-        @touchend="handleTouchEnd"
+        class="flex h-full"
+        :class="trackTransitionClass"
+        :style="trackStyle"
+        @transitionend="onTransitionEnd"
       >
-        <transition name="fade">
-          <div
-            v-if="activeSlide"
-            :key="activeSlide.title"
-            class="absolute inset-0"
-          >
-            <img
-              :src="activeSlide.image"
-              :alt="activeSlide.title"
-              class="absolute inset-0 h-full w-full object-cover"
-              draggable="false"
-            />
+        <div
+          v-for="slide in displaySlides"
+          :key="`${slide.id}-${slide._renderKey}`"
+          class="relative h-full w-full shrink-0"
+        >
+          <!-- Background Image -->
+          <img
+            :src="slide.image"
+            :alt="slide.title"
+            class="pointer-events-none absolute inset-0 h-full w-full object-cover"
+            draggable="false"
+            @dragstart.prevent
+          />
 
-            <div
-              class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"
-            ></div>
+          <!-- Dark Overlay -->
+          <div class="absolute inset-0 bg-gradient-to-r from-black/70 via-black/35 to-black/20"></div>
 
-            <div
-              class="pointer-events-none absolute inset-0 bg-gradient-to-br from-cyan-400/10 via-transparent to-emerald-300/10"
-            ></div>
+          <!-- Soft bottom overlay -->
+          <div class="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-black/55 via-black/10 to-transparent"></div>
 
-            <div class="relative z-10 flex h-full items-end p-8 md:p-10">
-              <div
-                class="max-w-xl rounded-3xl border border-white/20 bg-gradient-to-br from-sky-900/60 via-cyan-800/50 to-emerald-700/50 p-5 text-white shadow-2xl backdrop-blur-md md:p-6"
+          <!-- Content -->
+          <div class="relative z-10 flex h-full items-end px-6 py-7 md:px-10 md:py-10">
+            <div class="max-w-[720px]">
+              <p
+                v-if="slide.badge"
+                class="inline-flex rounded-full bg-white/15 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.22em] text-white backdrop-blur-sm"
               >
-                <p
-                  class="text-xs font-semibold uppercase tracking-[0.3em] text-cyan-200"
-                >
-                  Campus Story
-                </p>
+                {{ slide.badge }}
+              </p>
 
-                <h3 class="mt-2 text-2xl font-semibold leading-tight md:text-3xl">
-                  {{ activeSlide.title }}
-                </h3>
+              <h2 class="mt-4 text-3xl font-bold leading-tight text-white md:text-5xl">
+                {{ slide.title }}
+              </h2>
 
-                <p
-                  class="mt-2 text-sm leading-6 text-white/85 md:text-base md:leading-7"
+              <p class="mt-3 max-w-[620px] text-sm leading-7 text-white/90 md:text-lg">
+                {{ slide.description }}
+              </p>
+
+              <div class="mt-6">
+                <button
+                  type="button"
+                  class="rounded-2xl bg-white px-5 py-3 text-sm font-semibold text-slate-900 shadow-md transition hover:-translate-y-0.5 hover:shadow-xl"
+                  @click.stop="goToSlideDetail(slide)"
                 >
-                  {{ activeSlide.description }}
-                </p>
+                  {{ slide.ctaText || 'Learn More' }}
+                </button>
               </div>
             </div>
           </div>
-        </transition>
+        </div>
+      </div>
 
+      <!-- Dots -->
+      <div class="absolute bottom-4 left-1/2 z-20 flex -translate-x-1/2 items-center gap-2">
         <button
+          v-for="(slide, index) in slides"
+          :key="slide.id"
           type="button"
-          class="absolute left-5 top-1/2 z-20 -translate-y-1/2 rounded-full bg-white/85 px-4 py-3 text-lg font-semibold text-slate-800 shadow-lg transition hover:bg-white"
-          @click="prevSlide"
-          @mouseenter="pauseAutoplay"
-          @mouseleave="startAutoplay"
-        >
-          ‹
-        </button>
-
-        <button
-          type="button"
-          class="absolute right-5 top-1/2 z-20 -translate-y-1/2 rounded-full bg-white/85 px-4 py-3 text-lg font-semibold text-slate-800 shadow-lg transition hover:bg-white"
-          @click="nextSlide"
-          @mouseenter="pauseAutoplay"
-          @mouseleave="startAutoplay"
-        >
-          ›
-        </button>
+          class="h-2.5 rounded-full transition-all duration-300"
+          :class="realIndex === index ? 'w-8 bg-white' : 'w-2.5 bg-white/50 hover:bg-white/70'"
+          @click="goToRealSlide(index)"
+        />
       </div>
     </div>
   </section>
@@ -115,77 +90,228 @@
 
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
-import { slides } from '../../data/slides'
+import { useRouter } from 'vue-router'
+import { slides, type Slide } from '@/data/slides'
 
+type RenderSlide = Slide & {
+  _renderKey: string
+}
 
+const router = useRouter()
 
-const currentSlide = ref(0)
-const activeSlide = computed(() => slides[currentSlide.value])
+const trackRef = ref<HTMLElement | null>(null)
+const autoplayTimer = ref<number | null>(null)
 
-let intervalId: number | null = null
-const autoplayDelay = 4000
+const AUTO_DELAY = 4500
+const SWIPE_THRESHOLD = 70
 
-const touchStartX = ref(0)
-const touchEndX = ref(0)
-const minSwipeDistance = 50
+// Infinite-loop track:
+// [lastClone, ...realSlides, firstClone]
+const displaySlides = computed<RenderSlide[]>(() => {
+  if (slides.length === 0) return []
+
+  const first = slides[0]!
+  const last = slides[slides.length - 1]!
+
+  return [
+    { ...last, _renderKey: 'clone-last' },
+    ...slides.map((slide) => ({
+      ...slide,
+      _renderKey: `real-${slide.id}`,
+    })),
+    { ...first, _renderKey: 'clone-first' },
+  ]
+})
+
+// start from first real slide
+const currentIndex = ref(1)
+const isDragging = ref(false)
+const isAnimating = ref(true)
+const isJumping = ref(false)
+
+const startX = ref(0)
+const currentX = ref(0)
+const dragOffset = ref(0)
+
+const realIndex = computed(() => {
+  if (!slides.length) return 0
+
+  if (currentIndex.value === 0) return slides.length - 1
+  if (currentIndex.value === slides.length + 1) return 0
+
+  return currentIndex.value - 1
+})
+
+const trackStyle = computed(() => {
+  const width = trackRef.value?.offsetWidth || 1
+  const dragTranslate = isDragging.value ? (dragOffset.value / width) * 100 : 0
+  const baseTranslate = -currentIndex.value * 100
+
+  return {
+    transform: `translateX(${baseTranslate + dragTranslate}%)`,
+  }
+})
+
+const trackTransitionClass = computed(() => {
+  return isDragging.value || !isAnimating.value
+    ? ''
+    : 'transition-transform duration-700 ease-in-out'
+})
 
 function nextSlide() {
-  currentSlide.value = (currentSlide.value + 1) % slides.length
+  if (isJumping.value) return
+  isAnimating.value = true
+  currentIndex.value += 1
 }
 
 function prevSlide() {
-  currentSlide.value = (currentSlide.value - 1 + slides.length) % slides.length
+  if (isJumping.value) return
+  isAnimating.value = true
+  currentIndex.value -= 1
 }
 
-function goToSlide(index: number) {
-  currentSlide.value = index
+function goToRealSlide(index: number) {
+  isAnimating.value = true
+  currentIndex.value = index + 1
   restartAutoplay()
 }
 
-function startAutoplay() {
-  if (intervalId !== null) return
+function goToSlideDetail(slide: Slide) {
+  if (Math.abs(dragOffset.value) > 10) return
+  router.push(slide.route)
+}
 
-  intervalId = window.setInterval(() => {
+function onTransitionEnd() {
+  if (!slides.length) return
+
+  // if moved to fake first clone (after last real slide)
+  if (currentIndex.value === slides.length + 1) {
+    isJumping.value = true
+    isAnimating.value = false
+    currentIndex.value = 1
+
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        isJumping.value = false
+        isAnimating.value = true
+      })
+    })
+  }
+
+  // if moved to fake last clone (before first real slide)
+  if (currentIndex.value === 0) {
+    isJumping.value = true
+    isAnimating.value = false
+    currentIndex.value = slides.length
+
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        isJumping.value = false
+        isAnimating.value = true
+      })
+    })
+  }
+}
+
+function startAutoplay() {
+  stopAutoplay()
+  autoplayTimer.value = window.setInterval(() => {
     nextSlide()
-  }, autoplayDelay)
+  }, AUTO_DELAY)
+}
+
+function stopAutoplay() {
+  if (autoplayTimer.value !== null) {
+    window.clearInterval(autoplayTimer.value)
+    autoplayTimer.value = null
+  }
 }
 
 function pauseAutoplay() {
-  if (intervalId !== null) {
-    clearInterval(intervalId)
-    intervalId = null
+  stopAutoplay()
+}
+
+function resumeAutoplay() {
+  if (!isDragging.value) {
+    startAutoplay()
   }
 }
 
 function restartAutoplay() {
-  pauseAutoplay()
   startAutoplay()
 }
 
-function handleTouchStart(event: TouchEvent) {
+function onDragStart(event: MouseEvent) {
+  isDragging.value = true
+  startX.value = event.clientX
+  currentX.value = event.clientX
+  dragOffset.value = 0
   pauseAutoplay()
-  touchStartX.value = event.changedTouches[0]?.clientX ?? 0
-  touchEndX.value = touchStartX.value
+
+  window.addEventListener('mousemove', onDragMove)
+  window.addEventListener('mouseup', onDragEnd)
 }
 
-function handleTouchMove(event: TouchEvent) {
-  touchEndX.value = event.changedTouches[0]?.clientX ?? touchEndX.value
+function onDragMove(event: MouseEvent) {
+  if (!isDragging.value) return
+  currentX.value = event.clientX
+  dragOffset.value = currentX.value - startX.value
 }
 
-function handleTouchEnd() {
-  const distance = touchStartX.value - touchEndX.value
+function onDragEnd() {
+  if (!isDragging.value) return
 
-  if (Math.abs(distance) > minSwipeDistance) {
-    if (distance > 0) {
-      nextSlide()
-    } else {
-      prevSlide()
-    }
+  if (dragOffset.value > SWIPE_THRESHOLD) {
+    prevSlide()
+  } else if (dragOffset.value < -SWIPE_THRESHOLD) {
+    nextSlide()
   }
 
-  touchStartX.value = 0
-  touchEndX.value = 0
-  startAutoplay()
+  isDragging.value = false
+  dragOffset.value = 0
+
+  window.removeEventListener('mousemove', onDragMove)
+  window.removeEventListener('mouseup', onDragEnd)
+
+  resumeAutoplay()
+}
+
+function onTouchStart(event: TouchEvent) {
+  const touch = event.touches[0]
+  if (!touch) return
+
+  isDragging.value = true
+  startX.value = touch.clientX
+  currentX.value = touch.clientX
+  dragOffset.value = 0
+  pauseAutoplay()
+}
+
+function onTouchMove(event: TouchEvent) {
+  if (!isDragging.value) return
+
+  const touch = event.touches[0]
+  if (!touch) return
+
+  currentX.value = touch.clientX
+  dragOffset.value = currentX.value - startX.value
+
+  if (Math.abs(dragOffset.value) > 8) {
+    event.preventDefault()
+  }
+}
+function onTouchEnd() {
+  if (!isDragging.value) return
+
+  if (dragOffset.value > SWIPE_THRESHOLD) {
+    prevSlide()
+  } else if (dragOffset.value < -SWIPE_THRESHOLD) {
+    nextSlide()
+  }
+
+  isDragging.value = false
+  dragOffset.value = 0
+  resumeAutoplay()
 }
 
 onMounted(() => {
@@ -193,36 +319,22 @@ onMounted(() => {
 })
 
 onBeforeUnmount(() => {
-  pauseAutoplay()
+  stopAutoplay()
+  window.removeEventListener('mousemove', onDragMove)
+  window.removeEventListener('mouseup', onDragEnd)
 })
 </script>
 
 <style scoped>
-.fade-enter-active,
-.fade-leave-active {
-  transition:
-    opacity 1.8s ease-in-out,
-    transform 1.8s ease-in-out;
-  will-change: opacity, transform;
+.hero-carousel {
+  overscroll-behavior-x: contain;
 }
 
-.fade-enter-from {
-  opacity: 0;
-  transform: translateX(24px);
+.hero-carousel * {
+  -webkit-user-drag: none;
 }
 
-.fade-enter-to {
-  opacity: 1;
-  transform: translateX(0);
-}
-
-.fade-leave-from {
-  opacity: 1;
-  transform: translateX(0);
-}
-
-.fade-leave-to {
-  opacity: 0;
-  transform: translateX(-24px);
+.hero-carousel [ref='trackRef'] {
+  touch-action: pan-y;
 }
 </style>

@@ -16,7 +16,7 @@
 
       <div class="flex items-center gap-2">
         <span>Developed by</span>
-        <span class="font-semibold text-white">Khim Heng Nguon</span>
+        <span class="font-semibold text-white">HengNguon</span>
 
         <a
           href="https://github.com/Ngoun-gif"
