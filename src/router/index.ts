@@ -9,6 +9,7 @@ import EventDetail from '../pages/EventDetailPage.vue'
 import AboutPage from '../pages/AboutPage.vue'
 import InternshipPage from '../pages/InternshipPage.vue'
 import InternshipTrackDetail from '@/pages/InternshipTrackDetail.vue'
+import AnnouncementTypePage from '@/pages/AnnouncementTypePage.vue'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -23,6 +24,12 @@ const router = createRouter({
       path: '/announcements',
       name: 'announcements',
       component: AnnouncementsPage,
+    },
+    {
+      path: '/announcements/type/:type',
+      name: 'announcement-type',
+      component: AnnouncementTypePage,
+      props: true,
     },
     {
       path: '/announcements/:id',
