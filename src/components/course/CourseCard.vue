@@ -150,8 +150,10 @@ const levelClass = computed(() => {
       return 'bg-sky-100 text-sky-700'
     case 'Master':
       return 'bg-emerald-100 text-emerald-700'
-    case 'Creative':
-      return 'bg-purple-100 text-purple-700'
+    case 'Diploma':
+      return 'bg-cyan-100 text-cyan-700'
+    case 'Certificate':
+      return 'bg-violet-100 text-violet-700'
     default:
       return 'bg-slate-100 text-slate-700'
   }

@@ -1,16 +1,26 @@
 import { createRouter, createWebHistory } from 'vue-router'
+
 import HomePage from '../pages/home/HomePage.vue'
-import AnnouncementsPage from '../pages/announcement/AnnouncementsPage.vue'
+
+import AnnouncementsPage from '../pages/announcement/AnnouncementPage.vue'
 import AnnouncementDetailPage from '../pages/announcement/AnnouncementDetailPage.vue'
+import AnnouncementTypePage from '@/pages/announcement/AnnouncementTypePage.vue'
+
 import CoursePage from '../pages/course/CoursePage.vue'
 import CourseDetailPage from '../pages/course/CourseDetailPage.vue'
+import CourseTypePage from '@/pages/course/CourseTypePage.vue'
+
+import InternshipPage from '../pages/internship/InternshipPage.vue'
+import InternshipDetail from '@/pages/internship/InternshipDetail.vue'
+import InternshipTypePage from '@/pages/internship/InternshipTypePage.vue'
+
+import AboutPage from '../pages/about/AboutPage.vue'
+
 import EventsPage from '../pages/event/EventsPage.vue'
 import EventDetail from '../pages/event/EventDetailPage.vue'
-import AboutPage from '../pages/about/AboutPage.vue'
-import InternshipPage from '../pages/internship/InternshipPage.vue'
-import InternshipTrackDetail from '@/pages/internship/InternshipTrackDetail.vue'
-import AnnouncementTypePage from '@/pages/announcement/AnnouncementTypePage.vue'
-import CourseTypePage from '@/pages/course/CourseTypePage.vue'
+
+
+
 
 const router = createRouter({
   history: createWebHistory(),
@@ -58,6 +68,24 @@ const router = createRouter({
     },
 
     {
+      path: '/internships',
+      name: 'internships',
+      component: InternshipPage,
+    },
+    {
+      path: '/internships/type/:type',
+      name: 'internship-type',
+      component: InternshipTypePage,
+      props: true,
+    },
+    {
+      path: '/internships/:id',
+      name: 'internship-detail',
+      component: InternshipDetail,
+      props: true,
+    },
+
+    {
       path: '/events',
       name: 'events',
       component: EventsPage,
@@ -69,17 +97,7 @@ const router = createRouter({
       props: true,
     },
 
-    {
-      path: '/internships',
-      name: 'internships',
-      component: InternshipPage,
-    },
-    {
-      path: '/internship-tracks/:id',
-      name: 'internship-track-detail',
-      component: InternshipTrackDetail,
-      props: true,
-    },
+
 
     {
       path: '/about',

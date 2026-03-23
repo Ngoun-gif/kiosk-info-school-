@@ -9,11 +9,11 @@
 
     <article class="rounded-[24px] border border-slate-200 bg-white p-6 shadow-sm">
       <h2 class="text-2xl font-bold text-slate-900">
-        {{ pageTitle }} List
+        {{ pageTitle }}
       </h2>
 
       <p class="mt-2 text-sm text-slate-500">
-        Click any course to view full details
+        Click any course to view full details.
       </p>
 
       <div class="mt-6">

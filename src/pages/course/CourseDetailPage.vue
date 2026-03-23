@@ -1,6 +1,9 @@
 <template>
   <div class="space-y-6">
-    <section v-if="course" class="space-y-6 rounded-[28px] bg-white p-6 shadow-lg">
+    <section
+      v-if="course"
+      class="space-y-6 rounded-[28px] bg-white p-6 shadow-lg"
+    >
       <button
         @click="goBack"
         class="inline-flex items-center gap-2 rounded-full bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-200"
@@ -72,7 +75,7 @@
 
         <div class="mt-5 flex flex-wrap gap-3">
           <span
-            v-for="item in course.highlights"
+            v-for="item in course.highlights || []"
             :key="item"
             class="rounded-full bg-sky-50 px-4 py-2 text-sm font-medium text-sky-700"
           >
@@ -102,7 +105,7 @@
           <h2 class="text-2xl font-bold text-slate-900">Requirements</h2>
           <ul class="mt-5 space-y-3">
             <li
-              v-for="item in course.requirements"
+              v-for="item in course.requirements || []"
               :key="item"
               class="flex items-start gap-3 rounded-2xl border border-slate-100 bg-slate-50 p-4"
             >
@@ -118,7 +121,7 @@
           <h2 class="text-2xl font-bold text-slate-900">Suitable For</h2>
           <ul class="mt-5 space-y-3">
             <li
-              v-for="item in course.suitableFor"
+              v-for="item in course.suitableFor || []"
               :key="item"
               class="flex items-start gap-3 rounded-2xl border border-slate-100 bg-slate-50 p-4"
             >
@@ -136,7 +139,7 @@
           <h2 class="text-2xl font-bold text-slate-900">Learning Goals</h2>
           <ul class="mt-5 space-y-3">
             <li
-              v-for="item in course.goals"
+              v-for="item in course.goals || []"
               :key="item"
               class="flex items-start gap-3 rounded-2xl border border-slate-100 bg-slate-50 p-4"
             >
@@ -152,7 +155,7 @@
           <h2 class="text-2xl font-bold text-slate-900">Skills You Gain</h2>
           <div class="mt-5 flex flex-wrap gap-3">
             <span
-              v-for="item in course.skills"
+              v-for="item in course.skills || []"
               :key="item"
               class="rounded-full bg-emerald-50 px-4 py-2 text-sm font-medium text-emerald-700"
             >
@@ -163,14 +166,14 @@
       </div>
 
       <article
-        v-if="course.years && course.years.length"
+        v-if="course.years?.length"
         class="rounded-[24px] border border-slate-200 bg-white p-6 shadow-sm"
       >
         <h2 class="text-2xl font-bold text-slate-900">Year-by-Year Study Plan</h2>
 
         <div class="mt-6 grid gap-4">
           <div
-            v-for="year in course.years"
+            v-for="year in course.years || []"
             :key="year.year"
             class="rounded-2xl border border-slate-100 bg-slate-50 p-5"
           >
@@ -198,14 +201,14 @@
       </article>
 
       <article
-        v-if="course.career && course.career.length"
+        v-if="course.career?.length"
         class="rounded-[24px] border border-slate-200 bg-white p-6 shadow-sm"
       >
         <h2 class="text-2xl font-bold text-slate-900">Career Opportunities</h2>
 
         <div class="mt-5 flex flex-wrap gap-3">
           <span
-            v-for="item in course.career"
+            v-for="item in course.career || []"
             :key="item"
             class="rounded-full bg-amber-50 px-4 py-2 text-sm font-medium text-amber-700"
           >
@@ -213,6 +216,11 @@
           </span>
         </div>
       </article>
+
+      <ScheduleDetailPage
+        v-if="schedule"
+        :schedule="schedule"
+      />
     </section>
 
     <CourseRelatedPage
@@ -260,7 +268,9 @@ import {
   Palette,
 } from 'lucide-vue-next'
 import CourseRelatedPage from '../course/CourseRelatedPage.vue'
+import ScheduleDetailPage from './schedule/ScheduleDetailPage.vue'
 import { courses } from '@/data/courses'
+import { getScheduleByCourseId } from '@/data/schedule'
 
 const route = useRoute()
 const router = useRouter()
@@ -268,6 +278,11 @@ const router = useRouter()
 const course = computed(() =>
   courses.find((item) => item.id === Number(route.params.id)),
 )
+
+const schedule = computed(() => {
+  if (!course.value) return undefined
+  return getScheduleByCourseId(course.value.id)
+})
 
 const getCourseType = (category: string) => {
   const value = category.toLowerCase()
@@ -355,6 +370,10 @@ const levelBadgeClass = computed(() => {
       return 'bg-sky-100 text-sky-700'
     case 'Master':
       return 'bg-emerald-100 text-emerald-700'
+    case 'Diploma':
+      return 'bg-cyan-100 text-cyan-700'
+    case 'Certificate':
+      return 'bg-violet-100 text-violet-700'
     case 'Creative':
       return 'bg-purple-100 text-purple-700'
     default:

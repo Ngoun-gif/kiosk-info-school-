@@ -1,55 +1,77 @@
-import img1 from '@/assets/slides/course/hero-1.png'
-import img2 from '@/assets/slides/course/hero-2.png'
-import img3 from '@/assets/slides/course/hero-3.png'
+import type { Component } from 'vue'
+import {
+  MonitorSmartphone,
+  BriefcaseBusiness,
+
+  Code2,
+
+} from 'lucide-vue-next'
+
+import technologyImage from '@/assets/slides/course/hero-1.png'
+import softwareImage from '@/assets/slides/course/hero-2.png'
+import businessImage from '@/assets/slides/course/hero-3.png'
+
 
 export type CourseSlideType =
   | 'technology'
+  | 'software-engineering'
   | 'business'
+  | 'management'
   | 'creative'
+  | 'design'
 
-export type CourseSlide = {
+export type CourseSlideItem = {
   id: number
   title: string
+  subtitle: string
   description: string
   image: string
+  icon: Component
   type: CourseSlideType
   route: string
   badge?: string
-  ctaText?: string
+  buttonText?: string
 }
 
-export const courseSlides: CourseSlide[] = [
+export const courseSlides: CourseSlideItem[] = [
   {
     id: 1,
     title: 'Technology Programs',
+    subtitle: 'Build Digital Skills for the Future',
     description:
-      'Explore programs in software engineering, information systems, AI, and modern digital technologies.',
-    image: img1,
+      'Explore modern technology courses designed to strengthen digital knowledge, systems thinking, and practical technical ability.',
+    image: technologyImage,
+    icon: MonitorSmartphone,
     type: 'technology',
     route: '/courses/type/technology',
     badge: 'Technology',
-    ctaText: 'Explore Tech',
+    buttonText: 'Explore Courses',
   },
   {
     id: 2,
-    title: 'Business Programs',
+    title: 'Software Development Path',
+    subtitle: 'Learn to Build Real Applications',
     description:
-      'Develop business knowledge, leadership skills, and strategic thinking for modern organizations.',
-    image: img2,
-    type: 'business',
-    route: '/courses/type/business',
-    badge: 'Business',
-    ctaText: 'View Business',
+      'Develop practical skills in programming, web application development, debugging, databases, and software project workflows.',
+    image: softwareImage,
+    icon: Code2,
+    type: 'software-engineering',
+    route: '/courses/type/technology',
+    badge: 'Software',
+    buttonText: 'View Program',
   },
   {
     id: 3,
-    title: 'Creative & Design',
+    title: 'Business Programs',
+    subtitle: 'Grow Leadership and Strategy',
     description:
-      'Build creative skills in graphic design, multimedia, and visual communication.',
-    image: img3,
-    type: 'creative',
-    route: '/courses/type/creative',
-    badge: 'Creative',
-    ctaText: 'Discover Design',
+      'Study core business foundations including administration, communication, planning, and workplace decision-making.',
+    image: businessImage,
+    icon: BriefcaseBusiness,
+    type: 'business',
+    route: '/courses/type/business',
+    badge: 'Business',
+    buttonText: 'Explore Courses',
   },
+
 ]

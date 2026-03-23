@@ -1,333 +1,196 @@
 <template>
   <section
-    class="hero-carousel relative overflow-hidden rounded-[28px] bg-white shadow-lg select-none"
-    @mouseenter="pauseAutoplay"
-    @mouseleave="resumeAutoplay"
+    class="relative overflow-hidden rounded-[28px] bg-slate-950 shadow-xl"
+    @mouseenter="pauseAutoPlay"
+    @mouseleave="startAutoPlay"
+    @touchstart="onTouchStart"
+    @touchmove="onTouchMove"
+    @touchend="onTouchEnd"
+    @mousedown="onMouseDown"
+    @mousemove="onMouseMove"
+    @mouseup="onMouseUp"
+    @mouseleave.self="onMouseUp"
   >
-    <div
-      ref="trackRef"
-      class="hero-track relative h-[380px] w-full overflow-hidden md:h-[460px]"
-      @mousedown="onDragStart"
-      @touchstart="onTouchStart"
-      @touchmove="onTouchMove"
-      @touchend="onTouchEnd"
-      @touchcancel="onTouchEnd"
-      @mouseleave="onDragEnd"
-    >
+    <div class="relative h-[320px] md:h-[400px]">
       <div
-        class="flex h-full"
-        :class="trackTransitionClass"
-        :style="trackStyle"
-        @transitionend="onTransitionEnd"
+        class="flex h-full transition-transform duration-500 ease-out"
+        :style="{ transform: `translateX(-${activeIndex * 100}%)` }"
       >
-        <div
-          v-for="slide in displaySlides"
-          :key="`${slide.id}-${slide._renderKey}`"
-          class="relative h-full w-full shrink-0"
+        <article
+          v-for="slide in courseSlides"
+          :key="slide.id"
+          class="relative h-full min-w-full"
         >
           <img
             :src="slide.image"
             :alt="slide.title"
-            class="pointer-events-none absolute inset-0 h-full w-full object-cover"
+            class="h-full w-full object-cover"
             draggable="false"
-            @dragstart.prevent
           />
 
-          <div class="absolute inset-0 bg-gradient-to-r from-black/70 via-black/35 to-black/20"></div>
-          <div class="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-black/55 via-black/10 to-transparent"></div>
+          <div class="absolute inset-0 bg-gradient-to-r from-slate-950/85 via-slate-900/60 to-slate-900/20"></div>
 
-          <div class="relative z-10 flex h-full items-end px-6 py-7 md:px-10 md:py-10">
-            <div class="max-w-[720px]">
-              <p
-                v-if="slide.badge"
-                class="inline-flex rounded-full bg-white/15 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.22em] text-white backdrop-blur-sm"
-              >
-                {{ slide.badge }}
-              </p>
-
-              <h2 class="mt-4 text-3xl font-bold leading-tight text-white md:text-5xl">
-                {{ slide.title }}
-              </h2>
-
-              <p class="mt-3 max-w-[620px] text-sm leading-7 text-white/90 md:text-lg">
-                {{ slide.description }}
-              </p>
-
-              <div class="mt-6">
-                <button
-                  type="button"
-                  class="inline-flex items-center gap-2 rounded-2xl bg-white px-5 py-3 text-sm font-semibold text-slate-900 shadow-md transition hover:-translate-y-0.5 hover:shadow-xl"
-                  @click.stop="goToSlideDetail(slide)"
+          <div class="absolute inset-0 flex items-center">
+            <div class="w-full p-6 md:p-10">
+              <div class="max-w-2xl text-white">
+                <span
+                  v-if="slide.badge"
+                  class="inline-flex rounded-full bg-white/15 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.2em] text-cyan-100 backdrop-blur"
                 >
-                  {{ slide.ctaText || 'Learn More' }}
-                </button>
+                  {{ slide.badge }}
+                </span>
+
+                <h2 class="mt-4 text-3xl font-bold leading-tight md:text-4xl">
+                  {{ slide.title }}
+                </h2>
+
+                <p class="mt-3 text-sm font-medium uppercase tracking-[0.2em] text-cyan-200">
+                  {{ slide.subtitle }}
+                </p>
+
+                <p class="mt-4 max-w-xl text-sm leading-7 text-slate-200 md:text-base">
+                  {{ slide.description }}
+                </p>
+
+                <div class="mt-6">
+                  <button
+                    @click="goToRoute(slide.route)"
+                    class="rounded-full bg-white px-5 py-3 text-sm font-semibold text-slate-900 transition hover:scale-[1.02]"
+                  >
+                    {{ slide.buttonText || 'Explore Courses' }}
+                  </button>
+                </div>
               </div>
             </div>
           </div>
-        </div>
+        </article>
       </div>
+    </div>
 
-      <div class="absolute bottom-4 left-1/2 z-20 flex -translate-x-1/2 items-center gap-2">
-        <button
-          v-for="(slide, index) in courseSlides"
-          :key="slide.id"
-          type="button"
-          class="h-2.5 rounded-full transition-all duration-300"
-          :class="realIndex === index ? 'w-8 bg-white' : 'w-2.5 bg-white/50 hover:bg-white/70'"
-          @click="goToRealSlide(index)"
-        />
-      </div>
+    <div class="absolute bottom-4 left-1/2 flex -translate-x-1/2 gap-2">
+      <button
+        v-for="(_, index) in courseSlides"
+        :key="index"
+        @click="goToSlide(index)"
+        class="h-2.5 rounded-full transition-all duration-300"
+        :class="activeIndex === index ? 'w-8 bg-white' : 'w-2.5 bg-white/50 hover:bg-white/70'"
+      />
     </div>
   </section>
 </template>
 
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
+import { onBeforeUnmount, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
-
-import {
-  courseSlides,
-  type CourseSlide,
-} from '@/data/slides/courseSlides'
-
-type RenderSlide = CourseSlide & {
-  _renderKey: string
-}
+import { courseSlides } from '@/data/slides/courseSlides'
 
 const router = useRouter()
 
-const trackRef = ref<HTMLElement | null>(null)
-const autoplayTimer = ref<number | null>(null)
+const activeIndex = ref(0)
+const autoplay = ref<number | null>(null)
 
-const AUTO_DELAY = 4500
-const SWIPE_THRESHOLD = 70
-
-const currentIndex = ref(1)
 const isDragging = ref(false)
-const isAnimating = ref(true)
-const isJumping = ref(false)
-
 const startX = ref(0)
 const currentX = ref(0)
-const dragOffset = ref(0)
 
-const displaySlides = computed<RenderSlide[]>(() => {
-  if (courseSlides.length === 0) return []
-
-  const first = courseSlides[0]!
-  const last = courseSlides[courseSlides.length - 1]!
-
-  return [
-    { ...last, _renderKey: 'clone-last' },
-    ...courseSlides.map((slide) => ({
-      ...slide,
-      _renderKey: `real-${slide.id}`,
-    })),
-    { ...first, _renderKey: 'clone-first' },
-  ]
-})
-
-const realIndex = computed(() => {
-  if (!courseSlides.length) return 0
-
-  if (currentIndex.value === 0) return courseSlides.length - 1
-  if (currentIndex.value === courseSlides.length + 1) return 0
-
-  return currentIndex.value - 1
-})
-
-const trackStyle = computed(() => {
-  const width = trackRef.value?.offsetWidth || 1
-  const dragTranslate = isDragging.value ? (dragOffset.value / width) * 100 : 0
-  const baseTranslate = -currentIndex.value * 100
-
-  return {
-    transform: `translateX(${baseTranslate + dragTranslate}%)`,
-  }
-})
-
-const trackTransitionClass = computed(() => {
-  return isDragging.value || !isAnimating.value
-    ? ''
-    : 'transition-transform duration-700 ease-in-out'
-})
-
-function nextSlide() {
-  if (isJumping.value) return
-  isAnimating.value = true
-  currentIndex.value += 1
+const nextSlide = () => {
+  activeIndex.value = (activeIndex.value + 1) % courseSlides.length
 }
 
-function prevSlide() {
-  if (isJumping.value) return
-  isAnimating.value = true
-  currentIndex.value -= 1
+const prevSlide = () => {
+  activeIndex.value =
+    (activeIndex.value - 1 + courseSlides.length) % courseSlides.length
 }
 
-function goToRealSlide(index: number) {
-  isAnimating.value = true
-  currentIndex.value = index + 1
-  restartAutoplay()
+const goToSlide = (index: number) => {
+  activeIndex.value = index
 }
 
-function goToSlideDetail(slide: CourseSlide) {
-  if (Math.abs(dragOffset.value) > 10) return
-  router.push(slide.route)
+const goToRoute = (route: string) => {
+  router.push(route)
 }
 
-function onTransitionEnd() {
+const startAutoPlay = () => {
   if (!courseSlides.length) return
 
-  if (currentIndex.value === courseSlides.length + 1) {
-    isJumping.value = true
-    isAnimating.value = false
-    currentIndex.value = 1
+  pauseAutoPlay()
 
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        isJumping.value = false
-        isAnimating.value = true
-      })
-    })
-  }
-
-  if (currentIndex.value === 0) {
-    isJumping.value = true
-    isAnimating.value = false
-    currentIndex.value = courseSlides.length
-
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        isJumping.value = false
-        isAnimating.value = true
-      })
-    })
-  }
-}
-
-function startAutoplay() {
-  stopAutoplay()
-  autoplayTimer.value = window.setInterval(() => {
+  autoplay.value = window.setInterval(() => {
     nextSlide()
-  }, AUTO_DELAY)
+  }, 4500)
 }
 
-function stopAutoplay() {
-  if (autoplayTimer.value !== null) {
-    window.clearInterval(autoplayTimer.value)
-    autoplayTimer.value = null
+const pauseAutoPlay = () => {
+  if (autoplay.value !== null) {
+    window.clearInterval(autoplay.value)
+    autoplay.value = null
   }
 }
 
-function pauseAutoplay() {
-  stopAutoplay()
-}
+const handleSwipe = () => {
+  const distance = currentX.value - startX.value
 
-function resumeAutoplay() {
-  if (!isDragging.value) {
-    startAutoplay()
-  }
-}
+  if (Math.abs(distance) < 50) return
 
-function restartAutoplay() {
-  startAutoplay()
-}
-
-function onDragStart(event: MouseEvent) {
-  isDragging.value = true
-  startX.value = event.clientX
-  currentX.value = event.clientX
-  dragOffset.value = 0
-  pauseAutoplay()
-
-  window.addEventListener('mousemove', onDragMove)
-  window.addEventListener('mouseup', onDragEnd)
-}
-
-function onDragMove(event: MouseEvent) {
-  if (!isDragging.value) return
-  currentX.value = event.clientX
-  dragOffset.value = currentX.value - startX.value
-}
-
-function onDragEnd() {
-  if (!isDragging.value) return
-
-  if (dragOffset.value > SWIPE_THRESHOLD) {
+  if (distance < 0) {
+    nextSlide()
+  } else {
     prevSlide()
-  } else if (dragOffset.value < -SWIPE_THRESHOLD) {
-    nextSlide()
   }
-
-  isDragging.value = false
-  dragOffset.value = 0
-
-  window.removeEventListener('mousemove', onDragMove)
-  window.removeEventListener('mouseup', onDragEnd)
-
-  resumeAutoplay()
 }
 
-function onTouchStart(event: TouchEvent) {
+const onTouchStart = (event: TouchEvent) => {
   const touch = event.touches[0]
   if (!touch) return
 
+  pauseAutoPlay()
   isDragging.value = true
   startX.value = touch.clientX
   currentX.value = touch.clientX
-  dragOffset.value = 0
-  pauseAutoplay()
 }
 
-function onTouchMove(event: TouchEvent) {
+const onTouchMove = (event: TouchEvent) => {
   if (!isDragging.value) return
 
   const touch = event.touches[0]
   if (!touch) return
 
   currentX.value = touch.clientX
-  dragOffset.value = currentX.value - startX.value
-
-  if (Math.abs(dragOffset.value) > 8) {
-    event.preventDefault()
-  }
 }
 
-function onTouchEnd() {
+const onTouchEnd = () => {
   if (!isDragging.value) return
 
-  if (dragOffset.value > SWIPE_THRESHOLD) {
-    prevSlide()
-  } else if (dragOffset.value < -SWIPE_THRESHOLD) {
-    nextSlide()
-  }
-
+  handleSwipe()
   isDragging.value = false
-  dragOffset.value = 0
-  resumeAutoplay()
+  startAutoPlay()
+}
+
+const onMouseDown = (event: MouseEvent) => {
+  pauseAutoPlay()
+  isDragging.value = true
+  startX.value = event.clientX
+  currentX.value = event.clientX
+}
+
+const onMouseMove = (event: MouseEvent) => {
+  if (!isDragging.value) return
+  currentX.value = event.clientX
+}
+
+const onMouseUp = () => {
+  if (!isDragging.value) return
+
+  handleSwipe()
+  isDragging.value = false
+  startAutoPlay()
 }
 
 onMounted(() => {
-  startAutoplay()
+  startAutoPlay()
 })
 
 onBeforeUnmount(() => {
-  stopAutoplay()
-  window.removeEventListener('mousemove', onDragMove)
-  window.removeEventListener('mouseup', onDragEnd)
+  pauseAutoPlay()
 })
 </script>
-
-<style scoped>
-.hero-carousel {
-  overscroll-behavior-x: contain;
-}
-
-.hero-track {
-  touch-action: pan-y;
-}
-
-.hero-carousel * {
-  -webkit-user-drag: none;
-}
-</style>

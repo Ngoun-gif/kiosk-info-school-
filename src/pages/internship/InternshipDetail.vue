@@ -16,7 +16,7 @@
           @click="goBack"
           class="mb-5 inline-flex items-center gap-2 rounded-full bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-200"
         >
-          ← Back to Internships
+          ← Back to Internship Type
         </button>
 
         <div class="flex flex-wrap items-start justify-between gap-4">
@@ -178,68 +178,9 @@
           </div>
         </article>
 
-        <article
-          v-if="relatedTracks.length"
-          class="mt-8 rounded-[24px] border border-slate-200 bg-white p-6 shadow-sm"
-        >
-          <div class="mb-6">
-             <div class="flex items-center gap-2 text-sky-700">
-              <Layers3 class="h-5 w-5" />
-              <p class="text-sm font-semibold uppercase tracking-[0.2em]">
-                More Courses
-              </p>
-            </div>
-            <h2 class="text-2xl font-bold text-slate-900">
-              Related Internship Tracks
-            </h2>
-            <p class="mt-2 text-sm text-slate-500">
-              Explore more internship opportunities from other departments
-            </p>
-          </div>
-
-          <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-            <article
-              v-for="item in relatedTracks"
-              :key="item.id"
-              @click="goToDetail(item.id)"
-              class="group cursor-pointer rounded-2xl border border-slate-200 bg-white p-5 transition hover:-translate-y-1 hover:shadow-xl"
-            >
-              <div class="flex items-start gap-4">
-                <div
-                  class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-sky-100 via-cyan-100 to-emerald-100 text-sky-700"
-                >
-                  <component :is="item.icon" class="h-5 w-5" />
-                </div>
-
-                <div class="min-w-0 flex-1">
-                  <div class="flex flex-wrap items-center gap-2">
-                    <span
-                      class="rounded-full bg-sky-100 px-3 py-1 text-xs font-semibold text-sky-700"
-                    >
-                      {{ item.department }}
-                    </span>
-
-                    <span
-                      class="rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-600"
-                    >
-                      {{ item.duration }}
-                    </span>
-                  </div>
-
-                  <h3
-                    class="mt-3 text-lg font-semibold text-slate-900 transition group-hover:text-sky-700"
-                  >
-                    {{ item.title }}
-                  </h3>
-
-                  <p class="mt-2 line-clamp-2 text-sm leading-7 text-slate-600">
-                    {{ item.description }}
-                  </p>
-                </div>
-              </div>
-            </article>
-          </div>
-        </article>
+        <div class="mt-8">
+          <RelatedInternship :items="relatedTracks" />
+        </div>
       </div>
     </section>
 
@@ -248,10 +189,10 @@
       class="rounded-[28px] bg-white p-8 text-center shadow-lg"
     >
       <h2 class="text-2xl font-bold text-slate-900">
-        Internship Track Not Found
+        Internship Not Found
       </h2>
       <p class="mt-3 text-slate-600">
-        The internship track you selected does not exist.
+        The internship you selected does not exist.
       </p>
     </section>
   </div>
@@ -264,13 +205,21 @@ import {
   CheckCircle,
   BriefcaseBusiness,
   CalendarDays,
-  Layers3,
-
 } from 'lucide-vue-next'
+import RelatedInternship from '../internship/InternshipRelatedPgae.vue'
 import { internshipDetails, internshipTracks } from '@/data/internship'
 
 const route = useRoute()
 const router = useRouter()
+
+const internshipTypeMap: Record<number, string> = {
+  1: 'web-development',
+  2: 'software-engineering',
+  3: 'database-administration',
+  4: 'business-administration',
+  5: 'human-resource',
+  6: 'marketing',
+}
 
 const scrollToTop = async () => {
   await nextTick()
@@ -279,6 +228,11 @@ const scrollToTop = async () => {
 
   if (scrollContainer) {
     scrollContainer.scrollTo({
+      top: 0,
+      behavior: 'auto',
+    })
+  } else {
+    window.scrollTo({
       top: 0,
       behavior: 'auto',
     })
@@ -326,19 +280,23 @@ const relatedTracks = computed(() => {
   const currentId = track.value?.id
   if (!currentId) return []
 
-  return internshipTracks.filter((item) => item.id !== currentId).slice(0, 4)
+  return internshipTracks
+    .filter((item) => item.id !== currentId)
+    .slice(0, 4)
 })
 
-const goToDetail = async (id: number) => {
-  if (Number(route.params.id) === id) return
-
-  await router.push({
-    name: 'internship-track-detail',
-    params: { id },
-  })
-}
-
 const goBack = () => {
+  const id = Number(route.params.id)
+  const type = internshipTypeMap[id]
+
+  if (type) {
+    router.push({
+      name: 'internship-type',
+      params: { type },
+    })
+    return
+  }
+
   router.push({ name: 'internships' })
 }
 

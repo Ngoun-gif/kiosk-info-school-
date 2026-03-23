@@ -15,7 +15,7 @@
     <div class="mt-5 grid gap-4">
       <article
         v-for="session in schedule.sessions"
-        :key="session.shift"
+        :key="`${session.shift}-${session.days}-${session.time}`"
         class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm"
       >
         <div
@@ -75,7 +75,7 @@
 
 <script setup lang="ts">
 import { CalendarDays } from 'lucide-vue-next'
-import type { CourseSchedule } from '../../data/schedule'
+import type { CourseSchedule } from '@/data/schedule'
 
 defineProps<{
   schedule?: CourseSchedule

@@ -12,12 +12,18 @@
 
       <div class="min-w-0 flex-1">
         <div class="flex flex-wrap items-center gap-2">
-          <span class="rounded-full bg-sky-100 px-3 py-1 text-xs font-semibold text-sky-700">
+          <span
+            class="rounded-full px-3 py-1 text-xs font-semibold"
+            :class="trackBadgeClass"
+          >
             {{ item.department }}
           </span>
 
-          <span class="rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-600">
-            {{ item.duration }}
+          <span
+            class="rounded-full px-3 py-1 text-xs font-semibold"
+            :class="eligibilityBadgeClass"
+          >
+            {{ item.eligibility }}
           </span>
         </div>
 
@@ -68,13 +74,47 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue'
 import type { InternshipTrackItem } from '@/data/internship'
 
-defineProps<{
+const props = defineProps<{
   item: InternshipTrackItem
 }>()
 
 defineEmits<{
   (e: 'select', id: number): void
 }>()
+
+const trackBadgeClass = computed(() => {
+  switch (props.item.id) {
+    case 1:
+      return 'bg-blue-100 text-blue-700'
+    case 2:
+      return 'bg-cyan-100 text-cyan-700'
+    case 3:
+      return 'bg-indigo-100 text-indigo-700'
+    case 4:
+      return 'bg-amber-100 text-amber-700'
+    case 5:
+      return 'bg-rose-100 text-rose-700'
+    case 6:
+      return 'bg-purple-100 text-purple-700'
+    default:
+      return 'bg-slate-100 text-slate-700'
+  }
+})
+
+const eligibilityBadgeClass = computed(() => {
+  const value = props.item.eligibility.toLowerCase()
+
+  if (value.includes('qualified')) {
+    return 'bg-emerald-100 text-emerald-700'
+  }
+
+  if (value.includes('senior')) {
+    return 'bg-sky-100 text-sky-700'
+  }
+
+  return 'bg-slate-100 text-slate-700'
+})
 </script>

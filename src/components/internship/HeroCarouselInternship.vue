@@ -14,7 +14,6 @@
       @touchcancel="onTouchEnd"
       @mouseleave="onDragEnd"
     >
-      <!-- Slides Track -->
       <div
         class="flex h-full"
         :class="trackTransitionClass"
@@ -26,7 +25,6 @@
           :key="`${slide.id}-${slide._renderKey}`"
           class="relative h-full w-full shrink-0"
         >
-          <!-- Background Image -->
           <img
             :src="slide.image"
             :alt="slide.title"
@@ -35,25 +33,24 @@
             @dragstart.prevent
           />
 
-          <!-- Dark Overlay -->
-          <div class="absolute inset-0 bg-gradient-to-r from-black/70 via-black/35 to-black/20"></div>
+          <div class="absolute inset-0 bg-gradient-to-r from-black/75 via-black/40 to-black/20"></div>
+          <div class="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-black/60 via-black/10 to-transparent"></div>
 
-          <!-- Soft bottom overlay -->
-          <div class="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-black/55 via-black/10 to-transparent"></div>
-
-          <!-- Content -->
           <div class="relative z-10 flex h-full items-end px-6 py-7 md:px-10 md:py-10">
             <div class="max-w-[720px]">
               <p
-                v-if="slide.badge"
                 class="inline-flex rounded-full bg-white/15 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.22em] text-white backdrop-blur-sm"
               >
-                {{ slide.badge }}
+                Internship Program
               </p>
 
               <h2 class="mt-4 text-3xl font-bold leading-tight text-white md:text-5xl">
                 {{ slide.title }}
               </h2>
+
+              <p class="mt-3 text-base font-medium text-cyan-100 md:text-lg">
+                {{ slide.subtitle }}
+              </p>
 
               <p class="mt-3 max-w-[620px] text-sm leading-7 text-white/90 md:text-lg">
                 {{ slide.description }}
@@ -65,7 +62,7 @@
                   class="rounded-2xl bg-white px-5 py-3 text-sm font-semibold text-slate-900 shadow-md transition hover:-translate-y-0.5 hover:shadow-xl"
                   @click.stop="goToSlideDetail(slide)"
                 >
-                  {{ slide.ctaText || 'Learn More' }}
+                  {{ slide.buttonText || 'Explore Internship' }}
                 </button>
               </div>
             </div>
@@ -73,10 +70,9 @@
         </div>
       </div>
 
-      <!-- Dots -->
       <div class="absolute bottom-4 left-1/2 z-20 flex -translate-x-1/2 items-center gap-2">
         <button
-          v-for="(slide, index) in slides"
+          v-for="(slide, index) in internshipSlides"
           :key="slide.id"
           type="button"
           class="h-2.5 rounded-full transition-all duration-300"
@@ -91,9 +87,12 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { slides, type Slide } from '@/data/slides/homeSlides'
+import {
+  internshipSlides,
+  type InternshipSlideItem,
+} from '@/data/slides/internshipSlides'
 
-type RenderSlide = Slide & {
+type RenderSlide = InternshipSlideItem & {
   _renderKey: string
 }
 
@@ -105,17 +104,17 @@ const autoplayTimer = ref<number | null>(null)
 const AUTO_DELAY = 4500
 const SWIPE_THRESHOLD = 70
 
-// Infinite-loop track:
-// [lastClone, ...realSlides, firstClone]
 const displaySlides = computed<RenderSlide[]>(() => {
-  if (slides.length === 0) return []
+  if (internshipSlides.length === 0) return []
 
-  const first = slides[0]!
-  const last = slides[slides.length - 1]!
+  const first = internshipSlides[0]
+  const last = internshipSlides[internshipSlides.length - 1]
+
+  if (!first || !last) return []
 
   return [
     { ...last, _renderKey: 'clone-last' },
-    ...slides.map((slide) => ({
+    ...internshipSlides.map((slide) => ({
       ...slide,
       _renderKey: `real-${slide.id}`,
     })),
@@ -123,7 +122,6 @@ const displaySlides = computed<RenderSlide[]>(() => {
   ]
 })
 
-// start from first real slide
 const currentIndex = ref(1)
 const isDragging = ref(false)
 const isAnimating = ref(true)
@@ -134,10 +132,10 @@ const currentX = ref(0)
 const dragOffset = ref(0)
 
 const realIndex = computed(() => {
-  if (!slides.length) return 0
+  if (!internshipSlides.length) return 0
 
-  if (currentIndex.value === 0) return slides.length - 1
-  if (currentIndex.value === slides.length + 1) return 0
+  if (currentIndex.value === 0) return internshipSlides.length - 1
+  if (currentIndex.value === internshipSlides.length + 1) return 0
 
   return currentIndex.value - 1
 })
@@ -159,33 +157,33 @@ const trackTransitionClass = computed(() => {
 })
 
 function nextSlide() {
-  if (isJumping.value) return
+  if (isJumping.value || !internshipSlides.length) return
   isAnimating.value = true
   currentIndex.value += 1
 }
 
 function prevSlide() {
-  if (isJumping.value) return
+  if (isJumping.value || !internshipSlides.length) return
   isAnimating.value = true
   currentIndex.value -= 1
 }
 
 function goToRealSlide(index: number) {
+  if (!internshipSlides.length) return
   isAnimating.value = true
   currentIndex.value = index + 1
   restartAutoplay()
 }
 
-function goToSlideDetail(slide: Slide) {
+function goToSlideDetail(slide: InternshipSlideItem) {
   if (Math.abs(dragOffset.value) > 10) return
   router.push(slide.route)
 }
 
 function onTransitionEnd() {
-  if (!slides.length) return
+  if (!internshipSlides.length) return
 
-  // if moved to fake first clone (after last real slide)
-  if (currentIndex.value === slides.length + 1) {
+  if (currentIndex.value === internshipSlides.length + 1) {
     isJumping.value = true
     isAnimating.value = false
     currentIndex.value = 1
@@ -198,11 +196,10 @@ function onTransitionEnd() {
     })
   }
 
-  // if moved to fake last clone (before first real slide)
   if (currentIndex.value === 0) {
     isJumping.value = true
     isAnimating.value = false
-    currentIndex.value = slides.length
+    currentIndex.value = internshipSlides.length
 
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
@@ -215,6 +212,9 @@ function onTransitionEnd() {
 
 function startAutoplay() {
   stopAutoplay()
+
+  if (!internshipSlides.length) return
+
   autoplayTimer.value = window.setInterval(() => {
     nextSlide()
   }, AUTO_DELAY)
@@ -242,6 +242,8 @@ function restartAutoplay() {
 }
 
 function onDragStart(event: MouseEvent) {
+  if (!internshipSlides.length) return
+
   isDragging.value = true
   startX.value = event.clientX
   currentX.value = event.clientX
@@ -278,7 +280,7 @@ function onDragEnd() {
 
 function onTouchStart(event: TouchEvent) {
   const touch = event.touches[0]
-  if (!touch) return
+  if (!touch || !internshipSlides.length) return
 
   isDragging.value = true
   startX.value = touch.clientX
@@ -300,6 +302,7 @@ function onTouchMove(event: TouchEvent) {
     event.preventDefault()
   }
 }
+
 function onTouchEnd() {
   if (!isDragging.value) return
 
@@ -332,9 +335,10 @@ onBeforeUnmount(() => {
 
 .hero-carousel * {
   -webkit-user-drag: none;
+  user-select: none;
 }
 
-.hero-carousel [ref='trackRef'] {
+.hero-carousel {
   touch-action: pan-y;
 }
 </style>
