@@ -5,5 +5,5 @@
 </template>
 
 <script setup lang="ts">
-import AboutPanel from '../components/about/AboutPanel.vue'
+import AboutPanel from '../../components/about/AboutPanel.vue'
 </script>

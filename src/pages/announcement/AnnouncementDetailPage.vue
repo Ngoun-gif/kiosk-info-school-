@@ -184,7 +184,7 @@ import { Megaphone, Clock, User } from 'lucide-vue-next'
 import {
   announcements,
   type AnnouncementCategory,
-} from '../data/announcements'
+} from '../../data/announcements'
 
 const route = useRoute()
 const router = useRouter()

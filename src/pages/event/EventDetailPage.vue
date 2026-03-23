@@ -257,7 +257,7 @@ import {
   Sparkles,
   CalendarDays,
 } from 'lucide-vue-next'
-import { events, type EventItem } from '../data/events'
+import { events, type EventItem } from '../../data/events'
 
 const route = useRoute()
 const router = useRouter()

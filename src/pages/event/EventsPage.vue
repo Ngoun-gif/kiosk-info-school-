@@ -5,5 +5,5 @@
 </template>
 
 <script setup lang="ts">
-import EventsPanel from '../components/home/EventsPanel.vue'
+import EventsPanel from '../../components/home/EventsPanel.vue'
 </script>

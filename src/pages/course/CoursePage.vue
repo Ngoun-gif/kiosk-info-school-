@@ -88,7 +88,7 @@ import {
   CheckCircle2,
 
   Layers3,
-  Target,
+
   GraduationCap,
   BriefcaseBusiness,
   Sparkles ,
@@ -125,10 +125,7 @@ const courseHighlights = [
   },
 ]
 
-const overviewParagraphs = [
-  'Our academic programs are designed to support students from foundational learning through advanced knowledge, practical application, and professional preparation.',
-  'Each course offers a clear learning path with structured study plans, academic goals, and relevant skills that help students move confidently toward future employment or further study.',
-]
+
 
 const compareItems = [
   'Course overview and description',

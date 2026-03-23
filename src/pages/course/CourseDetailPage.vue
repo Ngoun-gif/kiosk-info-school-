@@ -359,10 +359,10 @@ import {
   Award,
   BadgeCheck,
 } from 'lucide-vue-next'
-import { courses } from '../data/courses'
-import ScheduleDetail from './ScheduleDetailPage.vue'
-import { getScheduleByCourseId } from '../data/schedule'
-import type { Course } from '../data/courses'
+import { courses } from '../../data/courses'
+import ScheduleDetail from '../../pages/schedule/ScheduleDetailPage.vue'
+import { getScheduleByCourseId } from '../../data/schedule'
+import type { Course } from '../../data/courses'
 
 const route = useRoute()
 const router = useRouter()

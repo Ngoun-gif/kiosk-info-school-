@@ -75,7 +75,7 @@
 
 <script setup lang="ts">
 import { CalendarDays } from 'lucide-vue-next'
-import type { CourseSchedule } from '../data/schedule'
+import type { CourseSchedule } from '../../data/schedule'
 
 defineProps<{
   schedule?: CourseSchedule
