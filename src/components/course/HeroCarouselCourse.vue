@@ -6,7 +6,7 @@
   >
     <div
       ref="trackRef"
-      class="relative h-[380px] w-full overflow-hidden md:h-[460px]"
+      class="hero-track relative h-[380px] w-full overflow-hidden md:h-[460px]"
       @mousedown="onDragStart"
       @touchstart="onTouchStart"
       @touchmove="onTouchMove"
@@ -14,7 +14,6 @@
       @touchcancel="onTouchEnd"
       @mouseleave="onDragEnd"
     >
-      <!-- Slides Track -->
       <div
         class="flex h-full"
         :class="trackTransitionClass"
@@ -26,7 +25,6 @@
           :key="`${slide.id}-${slide._renderKey}`"
           class="relative h-full w-full shrink-0"
         >
-          <!-- Background Image -->
           <img
             :src="slide.image"
             :alt="slide.title"
@@ -35,13 +33,9 @@
             @dragstart.prevent
           />
 
-          <!-- Dark Overlay -->
           <div class="absolute inset-0 bg-gradient-to-r from-black/70 via-black/35 to-black/20"></div>
-
-          <!-- Soft bottom overlay -->
           <div class="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-black/55 via-black/10 to-transparent"></div>
 
-          <!-- Content -->
           <div class="relative z-10 flex h-full items-end px-6 py-7 md:px-10 md:py-10">
             <div class="max-w-[720px]">
               <p
@@ -62,7 +56,7 @@
               <div class="mt-6">
                 <button
                   type="button"
-                  class="rounded-2xl bg-white px-5 py-3 text-sm font-semibold text-slate-900 shadow-md transition hover:-translate-y-0.5 hover:shadow-xl"
+                  class="inline-flex items-center gap-2 rounded-2xl bg-white px-5 py-3 text-sm font-semibold text-slate-900 shadow-md transition hover:-translate-y-0.5 hover:shadow-xl"
                   @click.stop="goToSlideDetail(slide)"
                 >
                   {{ slide.ctaText || 'Learn More' }}
@@ -73,10 +67,9 @@
         </div>
       </div>
 
-      <!-- Dots -->
       <div class="absolute bottom-4 left-1/2 z-20 flex -translate-x-1/2 items-center gap-2">
         <button
-          v-for="(slide, index) in slides"
+          v-for="(slide, index) in courseSlides"
           :key="slide.id"
           type="button"
           class="h-2.5 rounded-full transition-all duration-300"
@@ -91,9 +84,13 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { slides, type Slide } from '@/data/slides'
 
-type RenderSlide = Slide & {
+import {
+  courseSlides,
+  type CourseSlide,
+} from '@/data/slides/courseSlides'
+
+type RenderSlide = CourseSlide & {
   _renderKey: string
 }
 
@@ -105,25 +102,6 @@ const autoplayTimer = ref<number | null>(null)
 const AUTO_DELAY = 4500
 const SWIPE_THRESHOLD = 70
 
-// Infinite-loop track:
-// [lastClone, ...realSlides, firstClone]
-const displaySlides = computed<RenderSlide[]>(() => {
-  if (slides.length === 0) return []
-
-  const first = slides[0]!
-  const last = slides[slides.length - 1]!
-
-  return [
-    { ...last, _renderKey: 'clone-last' },
-    ...slides.map((slide) => ({
-      ...slide,
-      _renderKey: `real-${slide.id}`,
-    })),
-    { ...first, _renderKey: 'clone-first' },
-  ]
-})
-
-// start from first real slide
 const currentIndex = ref(1)
 const isDragging = ref(false)
 const isAnimating = ref(true)
@@ -133,11 +111,27 @@ const startX = ref(0)
 const currentX = ref(0)
 const dragOffset = ref(0)
 
-const realIndex = computed(() => {
-  if (!slides.length) return 0
+const displaySlides = computed<RenderSlide[]>(() => {
+  if (courseSlides.length === 0) return []
 
-  if (currentIndex.value === 0) return slides.length - 1
-  if (currentIndex.value === slides.length + 1) return 0
+  const first = courseSlides[0]!
+  const last = courseSlides[courseSlides.length - 1]!
+
+  return [
+    { ...last, _renderKey: 'clone-last' },
+    ...courseSlides.map((slide) => ({
+      ...slide,
+      _renderKey: `real-${slide.id}`,
+    })),
+    { ...first, _renderKey: 'clone-first' },
+  ]
+})
+
+const realIndex = computed(() => {
+  if (!courseSlides.length) return 0
+
+  if (currentIndex.value === 0) return courseSlides.length - 1
+  if (currentIndex.value === courseSlides.length + 1) return 0
 
   return currentIndex.value - 1
 })
@@ -176,16 +170,15 @@ function goToRealSlide(index: number) {
   restartAutoplay()
 }
 
-function goToSlideDetail(slide: Slide) {
+function goToSlideDetail(slide: CourseSlide) {
   if (Math.abs(dragOffset.value) > 10) return
   router.push(slide.route)
 }
 
 function onTransitionEnd() {
-  if (!slides.length) return
+  if (!courseSlides.length) return
 
-  // if moved to fake first clone (after last real slide)
-  if (currentIndex.value === slides.length + 1) {
+  if (currentIndex.value === courseSlides.length + 1) {
     isJumping.value = true
     isAnimating.value = false
     currentIndex.value = 1
@@ -198,11 +191,10 @@ function onTransitionEnd() {
     })
   }
 
-  // if moved to fake last clone (before first real slide)
   if (currentIndex.value === 0) {
     isJumping.value = true
     isAnimating.value = false
-    currentIndex.value = slides.length
+    currentIndex.value = courseSlides.length
 
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
@@ -300,6 +292,7 @@ function onTouchMove(event: TouchEvent) {
     event.preventDefault()
   }
 }
+
 function onTouchEnd() {
   if (!isDragging.value) return
 
@@ -330,11 +323,11 @@ onBeforeUnmount(() => {
   overscroll-behavior-x: contain;
 }
 
-.hero-carousel * {
-  -webkit-user-drag: none;
+.hero-track {
+  touch-action: pan-y;
 }
 
-.hero-carousel [ref='trackRef'] {
-  touch-action: pan-y;
+.hero-carousel * {
+  -webkit-user-drag: none;
 }
 </style>

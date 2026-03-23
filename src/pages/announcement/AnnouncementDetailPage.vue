@@ -16,7 +16,7 @@
           @click="goBack"
           class="mb-5 inline-flex items-center gap-2 rounded-full bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-200"
         >
-          ← Back to Announcements
+          ← Back to {{ backLabel }}
         </button>
 
         <div class="flex flex-wrap items-start justify-between gap-4">
@@ -87,88 +87,15 @@
       </div>
     </section>
 
-    <section
+    <AnnouncementRelatedPage
       v-if="announcement && relatedAnnouncements.length"
-      class="rounded-[28px] bg-white p-8 shadow-lg"
+      :items="relatedAnnouncements"
+    />
+
+    <section
+      v-if="!announcement"
+      class="rounded-[28px] bg-white p-8 text-center shadow-lg"
     >
-      <div class="mb-6">
-        <div class="flex items-center gap-2 text-sky-700">
-          <Megaphone class="h-4 w-4" />
-          <p class="text-sm font-semibold uppercase tracking-[0.2em]">
-            More Updates
-          </p>
-        </div>
-
-        <h2 class="mt-2 text-2xl font-bold text-slate-900">
-          Related Announcements
-        </h2>
-        <p class="mt-2 text-slate-600">
-          Explore more important notices and school updates.
-        </p>
-      </div>
-
-      <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-2">
-        <article
-          v-for="item in relatedAnnouncements"
-          :key="item.id"
-          @click="goToDetail(item.id)"
-          class="group cursor-pointer rounded-2xl border border-slate-200 bg-white p-5 transition hover:-translate-y-1 hover:shadow-xl"
-        >
-          <div class="flex items-start gap-4">
-            <div
-              class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-sky-100 via-cyan-100 to-emerald-100 text-sky-700"
-            >
-              <Megaphone class="h-5 w-5" />
-            </div>
-
-            <div class="min-w-0 flex-1">
-              <div class="flex flex-wrap items-center gap-2">
-                <span
-                  class="rounded-full px-3 py-1 text-xs font-semibold"
-                  :class="getCategoryClass(item.category)"
-                >
-                  {{ item.category }}
-                </span>
-
-                <span class="text-xs text-slate-500">
-                  {{ item.date }}
-                </span>
-              </div>
-
-              <h3
-                class="mt-3 line-clamp-2 text-lg font-semibold text-slate-900 transition group-hover:text-sky-700"
-              >
-                {{ item.title }}
-              </h3>
-
-              <p class="mt-2 line-clamp-3 text-sm leading-7 text-slate-600">
-                {{ item.description }}
-              </p>
-            </div>
-          </div>
-
-          <div
-            class="my-4 h-px bg-gradient-to-r from-sky-100 via-cyan-100 to-emerald-100"
-          ></div>
-
-          <div class="flex items-center justify-between text-xs text-slate-500">
-            <div class="flex items-center gap-1.5">
-              <Clock class="h-4 w-4" />
-              <span>Last updated: {{ item.date }}</span>
-            </div>
-
-            <div class="flex items-center gap-1.5">
-              <User class="h-4 w-4" />
-              <span class="font-medium text-slate-700">
-                {{ item.author }}
-              </span>
-            </div>
-          </div>
-        </article>
-      </div>
-    </section>
-
-    <section v-else class="rounded-[28px] bg-white p-8 text-center shadow-lg">
       <h1 class="text-2xl font-bold text-slate-900">Announcement not found</h1>
       <p class="mt-2 text-slate-600">
         The announcement you are looking for does not exist.
@@ -181,10 +108,11 @@
 import { computed, nextTick, onMounted } from 'vue'
 import { useRoute, useRouter, onBeforeRouteUpdate } from 'vue-router'
 import { Megaphone, Clock, User } from 'lucide-vue-next'
+import AnnouncementRelatedPage from '../announcement/AnnouncementRelatedPage.vue'
 import {
   announcements,
   type AnnouncementCategory,
-} from '../../data/announcements'
+} from '@/data/announcements'
 
 const route = useRoute()
 const router = useRouter()
@@ -218,20 +146,59 @@ const contentParagraphs = computed(() => {
 const relatedAnnouncements = computed(() => {
   const currentId = Number(route.params.id)
 
-  return announcements.filter((item) => item.id !== currentId).slice(0, 4)
+  if (!announcement.value) return []
+
+  return announcements.filter((item) => item.id !== currentId)
 })
 
-const goToDetail = async (id: number) => {
-  if (Number(route.params.id) === id) return
-
-  await router.push({
-    name: 'announcement-detail',
-    params: { id },
-  })
+const getAnnouncementType = (category: AnnouncementCategory) => {
+  switch (category) {
+    case 'Academic':
+      return 'academic'
+    case 'Events':
+      return 'event'
+    case 'Holiday':
+      return 'holiday'
+    case 'Internship':
+      return 'internship'
+    case 'General':
+      return 'general'
+    default:
+      return 'general'
+  }
 }
 
+const backLabel = computed(() => {
+  if (!announcement.value) return 'Announcements'
+
+  switch (announcement.value.category) {
+    case 'Academic':
+      return 'Academic Announcements'
+    case 'Events':
+      return 'Campus Events'
+    case 'Holiday':
+      return 'Holiday & Schedule Notices'
+    case 'Internship':
+      return 'Internship Opportunities'
+    case 'General':
+      return 'General Announcements'
+    default:
+      return 'Announcements'
+  }
+})
+
 const goBack = () => {
-  router.push({ name: 'announcements' })
+  if (!announcement.value) {
+    router.push({ name: 'announcements' })
+    return
+  }
+
+  router.push({
+    name: 'announcement-type',
+    params: {
+      type: getAnnouncementType(announcement.value.category),
+    },
+  })
 }
 
 const getCategoryClass = (category: AnnouncementCategory) => {

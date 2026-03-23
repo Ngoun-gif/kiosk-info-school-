@@ -91,7 +91,7 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { slides, type Slide } from '@/data/slides'
+import { slides, type Slide } from '@/data/slides/homeSlides'
 
 type RenderSlide = Slide & {
   _renderKey: string

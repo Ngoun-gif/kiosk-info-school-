@@ -10,6 +10,7 @@ import AboutPage from '../pages/about/AboutPage.vue'
 import InternshipPage from '../pages/internship/InternshipPage.vue'
 import InternshipTrackDetail from '@/pages/internship/InternshipTrackDetail.vue'
 import AnnouncementTypePage from '@/pages/announcement/AnnouncementTypePage.vue'
+import CourseTypePage from '@/pages/course/CourseTypePage.vue'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -47,6 +48,12 @@ const router = createRouter({
       path: '/courses/:id',
       name: 'course-detail',
       component: CourseDetailPage,
+      props: true,
+    },
+    {
+      path: '/courses/type/:type',
+      name: 'course-type',
+      component: CourseTypePage,
       props: true,
     },
 
