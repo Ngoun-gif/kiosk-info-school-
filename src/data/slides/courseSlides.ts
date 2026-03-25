@@ -2,23 +2,17 @@ import type { Component } from 'vue'
 import {
   MonitorSmartphone,
   BriefcaseBusiness,
-
-  Code2,
-
+  Palette,
 } from 'lucide-vue-next'
 
 import technologyImage from '@/assets/slides/course/hero-1.png'
-import softwareImage from '@/assets/slides/course/hero-2.png'
-import businessImage from '@/assets/slides/course/hero-3.png'
-
+import businessImage from '@/assets/slides/course/hero-2.png'
+import creativeImage from '@/assets/slides/course/hero-3.png'
 
 export type CourseSlideType =
   | 'technology'
-  | 'software-engineering'
   | 'business'
-  | 'management'
   | 'creative'
-  | 'design'
 
 export type CourseSlideItem = {
   id: number
@@ -49,19 +43,6 @@ export const courseSlides: CourseSlideItem[] = [
   },
   {
     id: 2,
-    title: 'Software Development Path',
-    subtitle: 'Learn to Build Real Applications',
-    description:
-      'Develop practical skills in programming, web application development, debugging, databases, and software project workflows.',
-    image: softwareImage,
-    icon: Code2,
-    type: 'software-engineering',
-    route: '/courses/type/technology',
-    badge: 'Software',
-    buttonText: 'View Program',
-  },
-  {
-    id: 3,
     title: 'Business Programs',
     subtitle: 'Grow Leadership and Strategy',
     description:
@@ -73,5 +54,17 @@ export const courseSlides: CourseSlideItem[] = [
     badge: 'Business',
     buttonText: 'Explore Courses',
   },
-
+  {
+    id: 3,
+    title: 'Creative & Design Programs',
+    subtitle: 'Design, Create, and Express Ideas',
+    description:
+      'Develop creative skills in design, media, and visual communication while learning modern tools and artistic thinking.',
+    image: creativeImage,
+    icon: Palette,
+    type: 'creative',
+    route: '/courses/type/creative',
+    badge: 'Creative',
+    buttonText: 'Explore Courses',
+  },
 ]

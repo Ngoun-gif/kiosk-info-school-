@@ -18,20 +18,13 @@
           </h2>
 
           <p class="mt-2 text-sm text-slate-500">
-            Explore more internship opportunities from other departments.
+            Explore more internship opportunities related to this field of study.
           </p>
         </div>
-
-        <button
-          @click="goToTypePage"
-          class="inline-flex items-center gap-2 rounded-full bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-200"
-        >
-          See more →
-        </button>
       </div>
     </div>
 
-    <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+    <div class="grid gap-4 md:grid-cols-2">
       <article
         v-for="item in visibleItems"
         :key="item.id"
@@ -49,20 +42,21 @@
             <div class="flex flex-wrap items-center gap-2">
               <span
                 class="rounded-full px-3 py-1 text-xs font-semibold"
-                :class="getBadgeClass(item.id)"
+                :class="getBadgeClass(item.department)"
               >
                 {{ item.department }}
               </span>
 
               <span
-                class="rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-600"
+                class="rounded-full px-3 py-1 text-xs font-semibold"
+                :class="getEligibilityClass(item.eligibility)"
               >
-                {{ item.duration }}
+                {{ item.eligibility }}
               </span>
             </div>
 
             <h3
-              class="mt-3 text-lg font-semibold text-slate-900 transition group-hover:text-sky-700"
+              class="mt-3 line-clamp-2 text-lg font-semibold text-slate-900 transition group-hover:text-sky-700"
             >
               {{ item.title }}
             </h3>
@@ -72,72 +66,108 @@
             </p>
           </div>
         </div>
+
+        <div
+          class="my-4 h-px bg-gradient-to-r from-sky-100 via-cyan-100 to-emerald-100"
+        ></div>
+
+        <div class="flex items-center justify-between text-xs text-slate-500">
+          <div class="flex items-center gap-1.5">
+            <Clock3 class="h-4 w-4" />
+            <span>{{ item.duration }}</span>
+          </div>
+
+          <div class="flex items-center gap-1.5">
+            <GraduationCap class="h-4 w-4" />
+            <span class="font-medium text-slate-700">
+              {{ item.eligibility }}
+            </span>
+          </div>
+        </div>
       </article>
+    </div>
+
+    <div
+      v-if="items.length > defaultLimit"
+      class="mt-6 flex justify-center"
+    >
+      <button
+        @click="toggleShow"
+        class="rounded-full bg-slate-100 px-5 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-200"
+      >
+        {{ expanded ? 'Show Less' : 'See More' }}
+      </button>
     </div>
   </article>
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { Layers3 } from 'lucide-vue-next'
+import { Layers3, Clock3, GraduationCap } from 'lucide-vue-next'
 import type { InternshipTrackItem } from '@/data/internship'
 
-const props = defineProps<{
-  items: InternshipTrackItem[]
-  currentId?: number
-}>()
+const props = withDefaults(
+  defineProps<{
+    items?: InternshipTrackItem[]
+    currentId?: number
+  }>(),
+  {
+    items: () => [],
+  },
+)
 
 const router = useRouter()
 
-const visibleItems = computed(() => props.items.slice(0, 2))
+const defaultLimit = 2
+const expanded = ref(false)
 
-const typeMap: Record<number, string> = {
-  1: 'web-development',
-  2: 'software-engineering',
-  3: 'database-administration',
-  4: 'business-administration',
-  5: 'human-resource',
-  6: 'marketing',
+const visibleItems = computed(() => {
+  if (expanded.value) return props.items
+  return props.items.slice(0, defaultLimit)
+})
+
+const toggleShow = () => {
+  expanded.value = !expanded.value
 }
 
-const goToDetail = (id: number) => {
-  router.push({
+const goToDetail = async (id: number) => {
+  await router.push({
     name: 'internship-detail',
     params: { id },
   })
 }
 
-const goToTypePage = () => {
-  const type = props.currentId ? typeMap[props.currentId] : undefined
-
-  if (type) {
-    router.push({
-      name: 'internship-type',
-      params: { type },
-    })
-    return
-  }
-
-  router.push({ name: 'internships' })
-}
-
-const getBadgeClass = (id: number) => {
-  switch (id) {
-    case 1:
+const getBadgeClass = (department: string) => {
+  switch (department) {
+    case 'Information Technology':
       return 'bg-blue-100 text-blue-700'
-    case 2:
+    case 'Computer Science':
       return 'bg-cyan-100 text-cyan-700'
-    case 3:
+    case 'Information Systems':
       return 'bg-indigo-100 text-indigo-700'
-    case 4:
+    case 'Management':
       return 'bg-amber-100 text-amber-700'
-    case 5:
+    case 'Human Resources':
       return 'bg-rose-100 text-rose-700'
-    case 6:
+    case 'Marketing':
       return 'bg-purple-100 text-purple-700'
     default:
       return 'bg-slate-100 text-slate-700'
   }
+}
+
+const getEligibilityClass = (eligibility: string) => {
+  const value = eligibility.toLowerCase()
+
+  if (value.includes('qualified')) {
+    return 'bg-emerald-100 text-emerald-700'
+  }
+
+  if (value.includes('senior')) {
+    return 'bg-sky-100 text-sky-700'
+  }
+
+  return 'bg-slate-100 text-slate-700'
 }
 </script>

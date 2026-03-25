@@ -6,7 +6,7 @@
   >
     <div
       ref="trackRef"
-      class="relative h-[380px] w-full overflow-hidden md:h-[460px]"
+      class="hero-track relative h-[380px] w-full overflow-hidden md:h-[460px]"
       @mousedown="onDragStart"
       @touchstart="onTouchStart"
       @touchmove="onTouchMove"
@@ -33,22 +33,23 @@
             @dragstart.prevent
           />
 
-          <div class="absolute inset-0 bg-gradient-to-r from-black/75 via-black/40 to-black/20"></div>
-          <div class="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-black/60 via-black/10 to-transparent"></div>
+          <div class="absolute inset-0 bg-gradient-to-r from-black/70 via-black/35 to-black/20"></div>
+          <div class="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-black/55 via-black/10 to-transparent"></div>
 
           <div class="relative z-10 flex h-full items-end px-6 py-7 md:px-10 md:py-10">
             <div class="max-w-[720px]">
               <p
+                v-if="slide.badge"
                 class="inline-flex rounded-full bg-white/15 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.22em] text-white backdrop-blur-sm"
               >
-                Internship Program
+                {{ slide.badge }}
               </p>
 
               <h2 class="mt-4 text-3xl font-bold leading-tight text-white md:text-5xl">
                 {{ slide.title }}
               </h2>
 
-              <p class="mt-3 text-base font-medium text-cyan-100 md:text-lg">
+              <p class="mt-3 text-sm font-medium uppercase tracking-[0.2em] text-cyan-200">
                 {{ slide.subtitle }}
               </p>
 
@@ -60,7 +61,7 @@
                 <button
                   type="button"
                   class="rounded-2xl bg-white px-5 py-3 text-sm font-semibold text-slate-900 shadow-md transition hover:-translate-y-0.5 hover:shadow-xl"
-                  @click.stop="goToSlideDetail(slide)"
+                  @click.stop="goToSlideDetail(slide.category)"
                 >
                   {{ slide.buttonText || 'Explore Internship' }}
                 </button>
@@ -104,13 +105,20 @@ const autoplayTimer = ref<number | null>(null)
 const AUTO_DELAY = 4500
 const SWIPE_THRESHOLD = 70
 
+const currentIndex = ref(1)
+const isDragging = ref(false)
+const isAnimating = ref(true)
+const isJumping = ref(false)
+
+const startX = ref(0)
+const currentX = ref(0)
+const dragOffset = ref(0)
+
 const displaySlides = computed<RenderSlide[]>(() => {
   if (internshipSlides.length === 0) return []
 
-  const first = internshipSlides[0]
-  const last = internshipSlides[internshipSlides.length - 1]
-
-  if (!first || !last) return []
+  const first = internshipSlides[0]!
+  const last = internshipSlides[internshipSlides.length - 1]!
 
   return [
     { ...last, _renderKey: 'clone-last' },
@@ -121,15 +129,6 @@ const displaySlides = computed<RenderSlide[]>(() => {
     { ...first, _renderKey: 'clone-first' },
   ]
 })
-
-const currentIndex = ref(1)
-const isDragging = ref(false)
-const isAnimating = ref(true)
-const isJumping = ref(false)
-
-const startX = ref(0)
-const currentX = ref(0)
-const dragOffset = ref(0)
 
 const realIndex = computed(() => {
   if (!internshipSlides.length) return 0
@@ -157,27 +156,29 @@ const trackTransitionClass = computed(() => {
 })
 
 function nextSlide() {
-  if (isJumping.value || !internshipSlides.length) return
+  if (isJumping.value) return
   isAnimating.value = true
   currentIndex.value += 1
 }
 
 function prevSlide() {
-  if (isJumping.value || !internshipSlides.length) return
+  if (isJumping.value) return
   isAnimating.value = true
   currentIndex.value -= 1
 }
 
 function goToRealSlide(index: number) {
-  if (!internshipSlides.length) return
   isAnimating.value = true
   currentIndex.value = index + 1
   restartAutoplay()
 }
 
-function goToSlideDetail(slide: InternshipSlideItem) {
+function goToSlideDetail(category: string) {
   if (Math.abs(dragOffset.value) > 10) return
-  router.push(slide.route)
+  router.push({
+    name: 'internship-type',
+    params: { type: category },
+  })
 }
 
 function onTransitionEnd() {
@@ -212,9 +213,6 @@ function onTransitionEnd() {
 
 function startAutoplay() {
   stopAutoplay()
-
-  if (!internshipSlides.length) return
-
   autoplayTimer.value = window.setInterval(() => {
     nextSlide()
   }, AUTO_DELAY)
@@ -242,8 +240,6 @@ function restartAutoplay() {
 }
 
 function onDragStart(event: MouseEvent) {
-  if (!internshipSlides.length) return
-
   isDragging.value = true
   startX.value = event.clientX
   currentX.value = event.clientX
@@ -280,7 +276,7 @@ function onDragEnd() {
 
 function onTouchStart(event: TouchEvent) {
   const touch = event.touches[0]
-  if (!touch || !internshipSlides.length) return
+  if (!touch) return
 
   isDragging.value = true
   startX.value = touch.clientX
@@ -333,12 +329,11 @@ onBeforeUnmount(() => {
   overscroll-behavior-x: contain;
 }
 
-.hero-carousel * {
-  -webkit-user-drag: none;
-  user-select: none;
+.hero-track {
+  touch-action: pan-y;
 }
 
-.hero-carousel {
-  touch-action: pan-y;
+.hero-carousel * {
+  -webkit-user-drag: none;
 }
 </style>

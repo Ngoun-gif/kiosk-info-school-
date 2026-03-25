@@ -23,6 +23,14 @@ export type InternshipSlideType =
   | 'human-resource'
   | 'marketing'
 
+export type InternshipCategoryType =
+  | 'information-technology'
+  | 'computer-science'
+  | 'information-systems'
+  | 'management'
+  | 'human-resources'
+  | 'marketing'
+
 export type InternshipSlideItem = {
   id: number
   title: string
@@ -31,6 +39,7 @@ export type InternshipSlideItem = {
   image: string
   icon: Component
   type: InternshipSlideType
+  category: InternshipCategoryType
   route: string
   badge?: string
   buttonText?: string
@@ -46,7 +55,8 @@ export const internshipSlides: InternshipSlideItem[] = [
     image: webDevelopmentImage,
     icon: Globe,
     type: 'web-development',
-    route: '/internships/type/web-development',
+    category: 'information-technology',
+    route: '/internships/type/information-technology',
     badge: 'Web Development',
     buttonText: 'Explore Internship',
   },
@@ -59,7 +69,8 @@ export const internshipSlides: InternshipSlideItem[] = [
     image: softwareEngineeringImage,
     icon: Code2,
     type: 'software-engineering',
-    route: '/internships/type/software-engineering',
+    category: 'computer-science',
+    route: '/internships/type/computer-science',
     badge: 'Software Engineering',
     buttonText: 'Explore Internship',
   },
@@ -72,7 +83,8 @@ export const internshipSlides: InternshipSlideItem[] = [
     image: databaseAdministrationImage,
     icon: Database,
     type: 'database-administration',
-    route: '/internships/type/database-administration',
+    category: 'information-systems',
+    route: '/internships/type/information-systems',
     badge: 'Database',
     buttonText: 'Explore Internship',
   },
@@ -85,7 +97,8 @@ export const internshipSlides: InternshipSlideItem[] = [
     image: businessAdministrationImage,
     icon: BriefcaseBusiness,
     type: 'business-administration',
-    route: '/internships/type/business-administration',
+    category: 'management',
+    route: '/internships/type/management',
     badge: 'Business Administration',
     buttonText: 'Explore Internship',
   },
@@ -98,7 +111,8 @@ export const internshipSlides: InternshipSlideItem[] = [
     image: humanResourceImage,
     icon: Users,
     type: 'human-resource',
-    route: '/internships/type/human-resource',
+    category: 'human-resources',
+    route: '/internships/type/human-resources',
     badge: 'Human Resource',
     buttonText: 'Explore Internship',
   },
@@ -111,6 +125,7 @@ export const internshipSlides: InternshipSlideItem[] = [
     image: marketingImage,
     icon: Megaphone,
     type: 'marketing',
+    category: 'marketing',
     route: '/internships/type/marketing',
     badge: 'Marketing',
     buttonText: 'Explore Internship',

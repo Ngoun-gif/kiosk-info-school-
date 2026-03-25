@@ -277,14 +277,23 @@ const combinedItems = computed(() => {
 })
 
 const relatedTracks = computed(() => {
-  const currentId = track.value?.id
-  if (!currentId) return []
+  const current = track.value
+  if (!current) return []
 
-  return internshipTracks
-    .filter((item) => item.id !== currentId)
-    .slice(0, 4)
+  const sameDepartment = internshipTracks.filter(
+    (item) =>
+      item.department === current.department &&
+      item.id !== current.id
+  )
+
+  const others = internshipTracks.filter(
+    (item) =>
+      item.department !== current.department &&
+      item.id !== current.id
+  )
+
+  return [...sameDepartment, ...others]
 })
-
 const goBack = () => {
   const id = Number(route.params.id)
   const type = internshipTypeMap[id]
