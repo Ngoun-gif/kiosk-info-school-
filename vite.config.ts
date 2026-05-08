@@ -14,7 +14,7 @@ export default defineConfig({
   },
   server: {
     host: '0.0.0.0', // allow external access
-    port: 8888,
+    port: 1111,
     strictPort: true, // fail if port is busy
   },
 })
